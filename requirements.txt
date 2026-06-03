@@ -1,0 +1,16 @@
+pandas
+numpy
+fuzzywuzzy
+python-Levenshtein
+matplotlib
+seaborn
+mysql-connector-python
+
+# ML training & serving
+scikit-learn
+xgboost
+joblib
+sqlalchemy
+fastapi
+uvicorn[standard]
+pydantic

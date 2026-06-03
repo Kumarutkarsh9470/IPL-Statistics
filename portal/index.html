@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IPL Analytics Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css?v=20260430a" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta
+      name="description"
+      content="Advanced IPL Analytics with custom plotting and dashboards."
+    />
+  </head>
+
+  <body>
+    <div class="background-animation"></div>
+    <div class="container">
+      <header>
+        <h1>IPL <span>Analytics</span></h1>
+        <p>Predictive Insights & Deep Dive Statistics</p>
+        <nav class="top-nav">
+          <button class="nav-btn active" data-target="overview">Team Analytics</button>
+          <button class="nav-btn" data-target="venue-insights">Venue Inights</button>
+          <button class="nav-btn" data-target="players">Leaderboards</button>
+          <button class="nav-btn" data-target="matchup">Player H2H</button>
+          <button class="nav-btn" data-target="visuals">Scatter Plots</button>
+          <button class="nav-btn" data-target="season">Season Analysis</button>
+          <button class="nav-btn" data-target="predictive">Predictions</button>
+        </nav>
+      </header>
+
+      <main>
+        <!-- 1. Team Analytics Overview Section -->
+        <div id="overview-section" class="view-section active">
+          <section class="glass-card nl-query-card">
+            <h2>Ask Queries</h2>
+            <div class="nl-query-controls">
+              <input
+                type="text"
+                id="nl-overview-input"
+                placeholder="E.g. Which teams have the highest win percentage at Wankhede Stadium?"
+              />
+              <button id="nl-overview-btn" class="action-btn">Run Query</button>
+            </div>
+            <!-- <p class="nl-config-hint">Natural-language search uses Grok (xAI). Add <strong>XAI_API_KEY</strong> in your root <strong>.env</strong> file.</p> -->
+            <p class="nl-query-note">Examples:</p>
+            <div class="nl-examples">
+              <button
+                class="nl-example"
+                data-target="nl-overview-input"
+                data-query="Show top 5 teams by overall win percentage."
+              >
+                Top 5 teams by win percentage
+              </button>
+              <button
+                class="nl-example"
+                data-target="nl-overview-input"
+                data-query="At Eden Gardens, which teams have played at least 10 matches and what is their win percentage?"
+              >
+                Venue wise win percentage (min 10 matches)
+              </button>
+              <button
+                class="nl-example"
+                data-target="nl-overview-input"
+                data-query="Show toss winners and match winners alignment by season."
+              >
+                Toss winner vs match winner by season
+              </button>
+            </div>
+            <div class="nl-query-sql hidden" id="nl-overview-sql"></div>
+            <div class="nl-query-output hidden" id="nl-overview-output"></div>
+          </section>
+
+          <!-- Toss Strategy -->
+          <section class="glass-card">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+              "
+            >
+              <h2>Toss Strategy Impact</h2>
+              <select
+                id="toss-venue-select"
+                class="action-btn"
+                style="background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1rem"
+              >
+                <option value="all">All Venues</option>
+              </select>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: center;
+                position: relative;
+                height: 320px;
+                width: 100%;
+              "
+            >
+              <canvas id="tossChart"></canvas>
+            </div>
+          </section>
+
+          <!-- H2H Matchups -->
+          <section class="glass-card">
+            <h2>Team Head-to-Head Rivalry</h2>
+            <p style="color: var(--text-secondary); text-align: center">
+              Select two teams to view historical dominance.
+            </p>
+            <div
+              class="filters"
+              style="
+                justify-content: center;
+                margin-top: 1.5rem;
+                margin-bottom: 2rem;
+                align-items: center;
+              "
+            >
+              <select
+                class="action-btn"
+                id="h2h-team1"
+                style="background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1rem"
+              >
+                <option value="">Team 1</option>
+              </select>
+              <span style="font-weight: bold; font-size: 1.5rem; margin: 0 2rem"
+                >VS</span
+              >
+              <select
+                class="action-btn"
+                id="h2h-team2"
+                style="background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1rem"
+              >
+                <option value="">Team 2</option>
+              </select>
+            </div>
+            <div
+              class="h2h-container hidden"
+              id="h2h-result-container"
+              style="max-width: 800px; margin: 0 auto; padding: 1rem"
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 0.5rem;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  font-size: 1.1rem;
+                "
+              >
+                <span id="h2h-name1" style="color: var(--primary)">Team 1</span>
+                <span style="color: #aaa">Dominance Bar</span>
+                <span id="h2h-name2" style="color: var(--secondary)"
+                  >Team 2</span
+                >
+              </div>
+              <div class="tug-of-war">
+                <div id="tug-bar1" class="tug-bar tug-left"></div>
+                <div id="tug-bar-draw" class="tug-bar tug-center"></div>
+                <div id="tug-bar2" class="tug-bar tug-right"></div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  margin-top: 1rem;
+                  font-size: 2.5rem;
+                  font-weight: 800;
+                "
+              >
+                <span id="h2h-score1" style="color: var(--primary)">0</span>
+                <span id="h2h-score2" style="color: var(--secondary)">0</span>
+              </div>
+              <div
+                style="
+                  text-align: center;
+                  color: rgba(255, 255, 255, 0.5);
+                  font-size: 0.9rem;
+                "
+                id="h2h-draws"
+              >
+                0 Draws / No Results
+              </div>
+            </div>
+          </section>
+
+          <!-- Venue Fortresses -->
+          <section class="glass-card">
+            <h2>Team wise win rate at Venues:</h2>
+            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 1rem">
+              Visualizing Team Win Percentages at prominent venues (>10
+              matches).
+            </p>
+            <div id="heatmap-loader" class="loader">
+              Crunching venue matrix...
+            </div>
+            <div id="heatmap-container" style="overflow-x: auto"></div>
+          </section>
+
+          <!-- Team Across Seasons -->
+          <section class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
+              <h2>Team Performance Across Seasons</h2>
+              <select id="team-performance-select" class="action-btn" style="background:rgba(0,0,0,0.3); padding:0.5rem 1rem;">
+                <option value="">Select Team</option>
+              </select>
+            </div>
+            <p style="color:var(--text-secondary); margin-top:0.4rem;">Pick a team to view seasonal position, top scorer, top wicket-taker, average runs per match, and overall insights.</p>
+            <div id="team-performance-loader" class="loader hidden">Analyzing team performance...</div>
+            <div id="team-performance-content" class="hidden">
+              <div class="stats-grid" id="team-performance-overall"></div>
+              <div class="table-container" style="margin-top:1.2rem;">
+                <table class="premium-table" id="team-performance-table">
+                  <thead>
+                    <tr>
+                      <th>Season</th><th>Position</th><th>Played</th><th>Wins</th><th>Losses</th><th>No Result</th><th>Win %</th><th>Avg Runs/Match</th><th>Top Scorer</th><th>Top Wicket-Taker</th>
+                    </tr>
+                  </thead>
+                  <tbody id="team-performance-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Venue Inights Section -->
+        <div id="venue-insights-section" class="view-section hidden">
+          <section class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
+              <h2>Venue Insights</h2>
+              <select id="venue-insights-select" class="action-btn" style="background:rgba(0,0,0,0.3); padding:0.5rem 1rem;">
+                <option value="">Select Venue</option>
+              </select>
+            </div>
+            <p style="color:var(--text-secondary); margin-top:0.4rem;">View average first-innings score, recent matches, probable home team record, and venue conditions.</p>
+            <div id="venue-insights-loader" class="loader hidden">Loading venue insights...</div>
+            <div id="venue-insights-content" class="hidden">
+              <div class="stats-grid" id="venue-insights-overall"></div>
+
+              <section class="glass-card" style="margin-top:1.2rem; padding:1.2rem;">
+                <h3 style="margin-bottom:0.8rem; color:var(--primary);">Venue Conditions</h3>
+                <div id="venue-insights-conditions" class="venue-condition-grid"></div>
+              </section>
+
+              <section class="glass-card" style="margin-top:1.2rem; padding:1.2rem;">
+                <h3 style="margin-bottom:0.8rem;">Past Five Matches</h3>
+                <div class="table-container">
+                  <table class="premium-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Fixture</th>
+                        <th>Winner</th>
+                        <th>1st Innings Score</th>
+                      </tr>
+                    </thead>
+                    <tbody id="venue-insights-recent-body"></tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+
+        <!-- 2. Player Stats Section -->
+        <div id="players-section" class="view-section hidden">
+          <section class="glass-card nl-query-card">
+            <h2>Ask Queries:</h2>
+            <div class="nl-query-controls">
+              <input
+                type="text"
+                id="nl-leaderboard-input"
+                placeholder="E.g. List top 10 run scorers in IPL history with strike rate above 130."
+              />
+              <button id="nl-leaderboard-btn" class="action-btn">
+                Run Query
+              </button>
+            </div>
+            <!-- <p class="nl-config-hint">Natural-language search uses Grok (xAI). Add <strong>XAI_API_KEY</strong> in your root <strong>.env</strong> file.</p> -->
+            <p class="nl-query-note">Examples:</p>
+            <div class="nl-examples">
+              <button
+                class="nl-example"
+                data-target="nl-leaderboard-input"
+                data-query="List top 10 players by total runs with their strike rate."
+              >
+                Top 10 run scorers with strike rate
+              </button>
+              <button
+                class="nl-example"
+                data-target="nl-leaderboard-input"
+                data-query="Which bowlers have taken at least 50 wickets and what is their economy?"
+              >
+                Bowlers with 50+ wickets and economy
+              </button>
+              <button
+                class="nl-example"
+                data-target="nl-leaderboard-input"
+                data-query="Show players with at least 5 fifties and at least 2 centuries."
+              >
+                Consistent batters (50s and 100s)
+              </button>
+            </div>
+            <div class="nl-query-sql hidden" id="nl-leaderboard-sql"></div>
+            <div
+              class="nl-query-output hidden"
+              id="nl-leaderboard-output"
+            ></div>
+          </section>
+          <section class="glass-card dashboard-toolbar">
+            <div class="filters">
+              <div class="filter-group">
+                <label>Season</label>
+                <select id="season-filter">
+                  <option value="all">All-Time</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>Team</label>
+                <select id="team-filter">
+                  <option value="all">All Teams</option>
+                </select>
+              </div>
+              <div class="filter-group search-group">
+                <label>Search Player</label>
+                <input
+                  type="text"
+                  id="player-search"
+                  placeholder="E.g. V Kohli..."
+                />
+              </div>
+            </div>
+          </section>
+          <section class="glass-card table-section">
+            <div id="players-loader" class="loader">
+              Loading Player Stats (This might take a moment)...
+            </div>
+            <div class="table-container hidden" id="table-container">
+              <table class="premium-table" id="leaderboardTable">
+                <thead>
+                  <tr>
+                    <th data-sort="player_name">Player Name</th>
+                    <th data-sort="matches">Mat</th>
+                    <th data-sort="total_runs" class="active-sort">
+                      Runs <span>▼</span>
+                    </th>
+                    <th data-sort="average">Avg</th>
+                    <th data-sort="strikeRate">SR</th>
+                    <th data-sort="centuries">100s</th>
+                    <th data-sort="fifties">50s</th>
+                    <th data-sort="fours">4s</th>
+                    <th data-sort="sixes">6s</th>
+                    <th data-sort="wickets" style="color: var(--secondary)">
+                      Wkts
+                    </th>
+                    <th data-sort="economy">Econ</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+              </table>
+            </div>
+            <div id="leaderboard-pagination" class="table-pagination hidden"></div>
+          </section>
+        </div>
+
+        <!-- 3. H2H Matchup -->
+        <div id="matchup-section" class="view-section hidden">
+          <section class="glass-card nl-query-card">
+            <h2>Ask Queries:</h2>
+            <div class="nl-query-controls">
+              <input
+                type="text"
+                id="nl-h2h-input"
+                placeholder="E.g. How has Virat Kohli performed against Jasprit Bumrah?"
+              />
+              <button id="nl-h2h-btn" class="action-btn">Run Query</button>
+            </div>
+            <!-- <p class="nl-config-hint">Natural-language search uses Grok (xAI). Add <strong>XAI_API_KEY</strong> in your root <strong>.env</strong> file.</p> -->
+            <p class="nl-query-note">Examples:</p>
+            <div class="nl-examples">
+              <button
+                class="nl-example"
+                data-target="nl-h2h-input"
+                data-query="Show top 10 batter vs bowler matchups by runs scored with balls faced and dismissals."
+              >
+                Top batter vs bowler rivalries
+              </button>
+              <button
+                class="nl-example"
+                data-target="nl-h2h-input"
+                data-query="How many runs, balls, and dismissals for Rohit Sharma against Sunil Narine?"
+              >
+                Specific batter vs bowler stats
+              </button>
+              <button
+                class="nl-example"
+                data-target="nl-h2h-input"
+                data-query="Which bowlers have dismissed AB de Villiers the most times?"
+              >
+                Most dismissals against a batter
+              </button>
+            </div>
+            <div class="nl-query-sql hidden" id="nl-h2h-sql"></div>
+            <div class="nl-query-output hidden" id="nl-h2h-output"></div>
+          </section>
+          <section class="glass-card matchup-toolbar">
+            <h2>Batter vs Bowler Simulator</h2>
+            <div
+              class="filters"
+              style="justify-content: center; margin-top: 2rem"
+            >
+              <div class="filter-group">
+                <label style="color: var(--primary)">Search Batter</label>
+                <div class="matchup-autocomplete">
+                  <input type="text" id="matchup-batter" placeholder="Start typing name..." autocomplete="off">
+                  <div id="batter-suggestions" class="matchup-suggestions hidden"></div>
+                </div>
+              </div>
+              <div
+                style="font-size: 2rem; font-weight: 800; padding: 1.5rem 1rem"
+              >
+                VS
+              </div>
+              <div class="filter-group">
+                <label style="color: var(--secondary)">Search Bowler</label>
+                <div class="matchup-autocomplete">
+                  <input type="text" id="matchup-bowler" placeholder="Start typing name..." autocomplete="off">
+                  <div id="bowler-suggestions" class="matchup-suggestions hidden"></div>
+                </div>
+              </div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem">
+              <button
+                id="run-matchup-btn"
+                class="action-btn"
+                style="background: var(--primary); color: #000"
+              >
+                Get Stats
+              </button>
+            </div>
+
+            <div id="matchup-result" class="hidden" style="margin-top: 3rem">
+              <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; margin-bottom:1.2rem;">
+                <div class="glass-card" style="padding:0.7rem 1rem; min-width:240px; text-align:center;">
+                  <div style="font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--primary);">Batter Style</div>
+                  <div id="mu-batter-style" style="margin-top:0.25rem; font-weight:700;">-</div>
+                </div>
+                <div class="glass-card" style="padding:0.7rem 1rem; min-width:240px; text-align:center;">
+                  <div style="font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--secondary);">Bowler Style</div>
+                  <div id="mu-bowler-style" style="margin-top:0.25rem; font-weight:700;">-</div>
+                </div>
+              </div>
+              <div class="stats-grid">
+                <div class="stat-box">
+                  <h3 id="mu-runs">0</h3>
+                  <p>Runs Scored</p>
+                </div>
+                <div class="stat-box">
+                  <h3 id="mu-balls">0</h3>
+                  <p>Balls Faced</p>
+                </div>
+                <div class="stat-box">
+                  <h3 id="mu-sr">0</h3>
+                  <p>Strike Rate</p>
+                </div>
+                <div class="stat-box">
+                  <h3 id="mu-outs" style="color: var(--secondary)">0</h3>
+                  <p>Times Dismissed</p>
+                </div>
+                <div class="stat-box">
+                  <h3 id="mu-boundaries">0</h3>
+                  <p>Boundaries (4s/6s)</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 4. Visuals / Scatter Plots -->
+        <div id="visuals-section" class="view-section hidden">
+          <section class="glass-card">
+            <h2 style="color: var(--primary)">
+              Batting Efficiency (Strike Rate vs Total Runs)
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem">
+              Minimum 50 runs scored.
+            </p>
+            <div style="position: relative; height: 400px; width: 100%">
+              <canvas id="batterChart"></canvas>
+            </div>
+          </section>
+          <section class="glass-card">
+            <h2 style="color: var(--secondary)">
+              Bowling Efficiency (Economy vs Wickets)
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem">
+              Minimum 2 wickets taken. Lower Economy is better.
+            </p>
+            <div style="position: relative; height: 400px; width: 100%">
+              <canvas id="bowlerChart"></canvas>
+            </div>
+          </section>
+        </div>
+
+        <!-- 5. Season Analysis -->
+        <div id="season-section" class="view-section hidden">
+          <section class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
+              <h2>Season Analysis</h2>
+              <select id="season-analysis-select" class="action-btn" style="background:rgba(0,0,0,0.3); padding:0.5rem 1rem;">
+                <option value="">Select Season</option>
+              </select>
+            </div>
+            <p style="color:var(--text-secondary); margin-top:0.4rem;">Pick a season to view tournament winners, top performers, and the points table.</p>
+            <div id="season-analysis-loader" class="loader hidden">Loading season analysis...</div>
+            <div id="season-analysis-content" class="hidden">
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.2rem; margin-bottom:2rem;">
+                <div class="glass-card" style="padding:1.2rem; text-align:center;">
+                  <h3 style="color:var(--primary); font-size:1.1rem; margin-bottom:0.4rem;">Tournament Winner</h3>
+                  <p id="season-winner-team" style="font-size:2rem; font-weight:800; color:var(--primary);">-</p>
+                  <p style="color:rgba(255,255,255,0.6); font-size:0.9rem; margin-top:0.4rem;">Position: <span id="season-winner-record">-</span></p>
+                </div>
+                <div class="glass-card" style="padding:1.2rem; text-align:center;">
+                  <h3 style="color:var(--secondary); font-size:1.1rem; margin-bottom:0.4rem;">Runner-up</h3>
+                  <p id="season-runner-up-team" style="font-size:2rem; font-weight:800; color:var(--secondary);">-</p>
+                  <p style="color:rgba(255,255,255,0.6); font-size:0.9rem; margin-top:0.4rem;">Position: <span id="season-runner-up-record">-</span></p>
+                </div>
+                <div class="glass-card" style="padding:1.2rem; text-align:center;">
+                  <h3 style="color:rgba(69, 243, 255, 0.8); font-size:1.1rem; margin-bottom:0.4rem;">Tournament Stats</h3>
+                  <p id="season-match-count" style="font-size:1.8rem; font-weight:800; color:rgba(69, 243, 255, 0.8);">-</p>
+                  <p style="color:rgba(255,255,255,0.6); font-size:0.9rem; margin-top:0.4rem;">Total Matches</p>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:2rem;">
+                <section class="glass-card">
+                  <h3 style="color:var(--primary); margin-bottom:1rem; text-align:center;">Top Run Scorers</h3>
+                  <div id="season-top-batters" style="display:flex; flex-direction:column; gap:0.8rem;"></div>
+                </section>
+                <section class="glass-card">
+                  <h3 style="color:var(--secondary); margin-bottom:1rem; text-align:center;">Top Wicket Takers</h3>
+                  <div id="season-top-bowlers" style="display:flex; flex-direction:column; gap:0.8rem;"></div>
+                </section>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:2rem;">
+                <div class="glass-card" style="padding:1.2rem; text-align:center;">
+                  <h3 style="color:rgba(69, 243, 255, 0.8); margin-bottom:0.8rem;">Highest Innings</h3>
+                  <p id="season-highest-team" style="font-size:1.4rem; font-weight:600;">-</p>
+                  <p id="season-highest-runs" style="font-size:2.2rem; font-weight:800; color:rgba(69, 243, 255, 0.8); margin:0.4rem 0;">-</p>
+                </div>
+                <div class="glass-card" style="padding:1.2rem; text-align:center;">
+                  <h3 style="color:rgba(255, 100, 100, 0.8); margin-bottom:0.8rem;">Lowest Innings</h3>
+                  <p id="season-lowest-team" style="font-size:1.4rem; font-weight:600;">-</p>
+                  <p id="season-lowest-runs" style="font-size:2.2rem; font-weight:800; color:rgba(255, 100, 100, 0.8); margin:0.4rem 0;">-</p>
+                </div>
+              </div>
+              <section class="glass-card">
+                <h3 style="margin-bottom:1rem; text-align:center;">Points Table / Standings</h3>
+                <div class="table-container">
+                  <table class="premium-table">
+                    <thead>
+                      <tr>
+                        <th>Position</th><th>Team</th><th>Played</th><th>Wins</th><th>Losses</th><th>No Result</th><th>Win %</th><th>Points</th>
+                      </tr>
+                    </thead>
+                    <tbody id="season-points-table-body"></tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+
+        <!-- 6. Predictions Lab (ML-powered via FastAPI) -->
+        <div id="predictive-section" class="view-section hidden">
+          <div
+            id="ml-server-banner"
+            class="hidden"
+            style="
+              background: rgba(255, 0, 85, 0.15);
+              border: 1px solid var(--secondary);
+              border-radius: 12px;
+              padding: 1rem 1.5rem;
+              margin-bottom: 1.5rem;
+              text-align: center;
+              color: var(--secondary);
+            "
+          >
+            Prediction service is offline. Start it with:
+            <code>uvicorn ml.serve:app --port 8000</code>
+            (from the project root)
+          </div>
+
+          <!-- Match Outcome Prediction -->
+          <section class="glass-card">
+            <h2 style="color: var(--primary)">Match Outcome Predictor</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem">
+              XGBoost model trained on historical form, venue stats, H2H records
+              & toss data.
+            </p>
+
+            <div
+              class="filters"
+              style="
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+              "
+            >
+              <select
+                id="pred-team1"
+                class="action-btn"
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 0.5rem;
+                  color: #fff;
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  border-radius: 4px;
+                "
+              >
+                <option value="">Select Team 1</option>
+              </select>
+              <span style="font-weight: bold; font-size: 1.3rem">VS</span>
+              <select
+                id="pred-team2"
+                class="action-btn"
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 0.5rem;
+                  color: #fff;
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  border-radius: 4px;
+                "
+              >
+                <option value="">Select Team 2</option>
+              </select>
+              <select
+                id="pred-venue"
+                class="action-btn"
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 0.5rem;
+                  color: #fff;
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  border-radius: 4px;
+                "
+              >
+                <option value="">Select Venue</option>
+              </select>
+            </div>
+            <div
+              class="filters"
+              style="
+                justify-content: center;
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                gap: 10px;
+              "
+            >
+              <select
+                id="pred-toss-winner"
+                class="action-btn"
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 0.5rem;
+                  color: #fff;
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  border-radius: 4px;
+                "
+              >
+                <option value="">Toss Winner</option>
+                <option value="team1">Team 1</option>
+                <option value="team2">Team 2</option>
+              </select>
+              <select
+                id="pred-toss-decision"
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 0.5rem;
+                  color: #fff;
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  border-radius: 4px;
+                "
+              >
+                <option value="bat">Bat First</option>
+                <option value="field">Field First</option>
+              </select>
+              <select
+                id="pred-match-stage"
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 0.5rem;
+                  color: #fff;
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  border-radius: 4px;
+                "
+              >
+                <option value="league">League</option>
+                <option value="qualifier">Qualifier</option>
+                <option value="eliminator">Eliminator</option>
+                <option value="final">Final</option>
+              </select>
+            </div>
+            <div style="text-align: center; margin-top: 2rem">
+              <button
+                id="btn-pred-match"
+                class="action-btn"
+                style="
+                  background: var(--primary);
+                  color: #000;
+                  font-weight: bold;
+                "
+              >
+                Predict Winner
+              </button>
+            </div>
+            <div
+              id="out-pred-match"
+              class="hidden"
+              style="margin-top: 1.5rem"
+            ></div>
+          </section>
+
+          <!-- Mid-Match Score Prediction -->
+          <section class="glass-card">
+            <h2 style="color: var(--secondary)">Live Score Predictor</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem">
+              Forecast the final 1st innings total given current match state.
+            </p>
+
+            <div
+              class="filters"
+              style="justify-content: center; flex-wrap: wrap; gap: 10px"
+            >
+              <select
+                id="pred-score-team1"
+                class="action-btn"
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 0.5rem;
+                  color: #fff;
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  border-radius: 4px;
+                "
+              >
+                <option value="">Batting Team</option>
+              </select>
+              <select
+                id="pred-score-team2"
+                class="action-btn"
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 0.5rem;
+                  color: #fff;
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  border-radius: 4px;
+                "
+              >
+                <option value="">Bowling Team</option>
+              </select>
+              <select
+                id="pred-score-venue"
+                class="action-btn"
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 0.5rem;
+                  color: #fff;
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  border-radius: 4px;
+                "
+              >
+                <option value="">Select Venue</option>
+              </select>
+            </div>
+
+            <div
+              class="filters"
+              style="
+                justify-content: center;
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                gap: 10px;
+                align-items: center;
+              "
+            >
+              <div class="filter-group" style="flex: none">
+                <label style="color: var(--primary); font-size: 0.85rem"
+                  >Current Over</label
+                >
+                <input
+                  type="range"
+                  id="pred-score-over"
+                  min="1"
+                  max="20"
+                  value="10"
+                  style="width: 180px; accent-color: var(--secondary)"
+                />
+                <span
+                  id="pred-score-over-label"
+                  style="font-weight: bold; color: var(--secondary)"
+                  >10</span
+                >
+              </div>
+              <div class="filter-group" style="flex: none">
+                <label style="font-size: 0.85rem">Runs Scored</label>
+                <input
+                  type="number"
+                  id="pred-score-runs"
+                  placeholder="82"
+                  min="0"
+                  style="width: 80px"
+                />
+              </div>
+              <div class="filter-group" style="flex: none">
+                <label style="font-size: 0.85rem">Wickets</label>
+                <input
+                  type="number"
+                  id="pred-score-wickets"
+                  placeholder="3"
+                  min="0"
+                  max="10"
+                  style="width: 60px"
+                />
+              </div>
+              <div class="filter-group" style="flex: none">
+                <label style="font-size: 0.85rem">Boundaries</label>
+                <input
+                  type="number"
+                  id="pred-score-boundaries"
+                  placeholder="9"
+                  min="0"
+                  style="width: 60px"
+                />
+              </div>
+              <div class="filter-group" style="flex: none">
+                <label style="font-size: 0.85rem">Dot Balls</label>
+                <input
+                  type="number"
+                  id="pred-score-dots"
+                  placeholder="24"
+                  min="0"
+                  style="width: 60px"
+                />
+              </div>
+              <div class="filter-group" style="flex: none">
+                <label style="font-size: 0.85rem">Extras</label>
+                <input
+                  type="number"
+                  id="pred-score-extras"
+                  placeholder="6"
+                  min="0"
+                  style="width: 60px"
+                />
+              </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem">
+              <button
+                id="btn-pred-score"
+                class="action-btn"
+                style="
+                  background: var(--secondary);
+                  color: #000;
+                  font-weight: bold;
+                "
+              >
+                Predict Final Score
+              </button>
+            </div>
+            <div
+              id="out-pred-score"
+              class="hidden"
+              style="margin-top: 1.5rem"
+            ></div>
+            <div
+              style="
+                position: relative;
+                height: 280px;
+                width: 100%;
+                margin-top: 1rem;
+              "
+            >
+              <canvas id="scoreProjectionChart"></canvas>
+            </div>
+          </section>
+
+          <!-- Player Performance Predictor -->
+          <section class="glass-card">
+            <h2>Player Performance Predictor</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem">
+              Forecast runs or wickets based on rolling form, venue history &
+              opposition stats.
+            </p>
+
+            <div
+              class="filters"
+              style="
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                align-items: center;
+              "
+            >
+              <div class="filter-group" style="flex: none">
+                <label style="color: var(--primary); font-size: 0.85rem"
+                  >Player Name</label
+                >
+                <input
+                  type="text"
+                  id="pred-player-name"
+                  list="player-list-pred"
+                  placeholder="e.g. V Kohli"
+                  style="
+                    background: rgba(0, 0, 0, 0.3);
+                    padding: 0.5rem;
+                    color: #fff;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 4px;
+                    width: 160px;
+                  "
+                />
+                <datalist id="player-list-pred"></datalist>
+              </div>
+              <div class="filter-group" style="flex: none">
+                <label style="font-size: 0.85rem">Role</label>
+                <select
+                  id="pred-player-role"
+                  style="
+                    background: rgba(0, 0, 0, 0.3);
+                    padding: 0.5rem;
+                    color: #fff;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 4px;
+                  "
+                >
+                  <option value="batting">Batting</option>
+                  <option value="bowling">Bowling</option>
+                </select>
+              </div>
+              <div class="filter-group" style="flex: none">
+                <label style="font-size: 0.85rem">Opposition</label>
+                <select
+                  id="pred-player-opp"
+                  class="action-btn"
+                  style="
+                    background: rgba(0, 0, 0, 0.3);
+                    padding: 0.5rem;
+                    color: #fff;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 4px;
+                  "
+                >
+                  <option value="">Opponent Team</option>
+                </select>
+              </div>
+              <div class="filter-group" style="flex: none">
+                <label style="font-size: 0.85rem">Venue</label>
+                <select
+                  id="pred-player-venue"
+                  class="action-btn"
+                  style="
+                    background: rgba(0, 0, 0, 0.3);
+                    padding: 0.5rem;
+                    color: #fff;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 4px;
+                  "
+                >
+                  <option value="">Select Venue</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem">
+              <button
+                id="btn-pred-player"
+                class="action-btn"
+                style="font-weight: bold"
+              >
+                Predict Performance
+              </button>
+            </div>
+            <div
+              id="out-pred-player"
+              class="hidden"
+              style="margin-top: 1.5rem"
+            ></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="js/main.js?v=20260430a"></script>
+  </body>
+</html>
