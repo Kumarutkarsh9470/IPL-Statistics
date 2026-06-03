@@ -19,7 +19,11 @@ A full-stack IPL analytics and machine learning project for DA214 Database Manag
 # 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Prepare data (place data/raw/IPL.csv first)
+# 2. Copy environment example and set secrets
+copy .env.example .env
+# Edit .env to set DB credentials and any API keys
+
+# 3. Prepare data (place data/raw/IPL.csv first)
 python EDA/process.py
 
 # 3. Load into MySQL and train models
