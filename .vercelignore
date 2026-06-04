@@ -1,0 +1,22 @@
+# Vercel build ignore file
+.git
+.gitignore
+node_modules
+.env.local
+.env.*.local
+.next
+.nuxt
+dist
+build
+*.log
+.vscode
+.idea
+*.swp
+*.swo
+EDA/
+data/raw/
+*.ipynb
+.pytest_cache/
+__pycache__/
+.coverage
+.mypy_cache
