@@ -5,6 +5,12 @@ EDA/
 data/
 eda_outputs/
 requirements.txt
-*.py
-*.sh
 Procfile
+build.sh
+import_ipl.py
+pyproject.toml
+setup.py
+*.py
+*.ipynb
+*.sh
+database design/
