@@ -137,6 +137,7 @@ Railway MySQL Host:     ___________
 Railway MySQL User:     ___________
 Railway MySQL Password: ___________
 ```
+
 ---
 
 ## 💰 Cost Breakdown - 100% FREE
@@ -152,6 +153,7 @@ Railway MySQL Password: ___________
 **Note:** Railway gives **$5/month free credit** - enough to run PHP + MySQL for small projects.
 
 ### Alternative Free Database Options:
+
 - **Render.com** - PostgreSQL free tier
 - **Google Cloud SQL** - Free tier (requires credit card)
 - **Supabase** - PostgreSQL free tier
@@ -207,13 +209,13 @@ If your structure is different, update `Procfile` accordingly.
 
 ## 🆘 Quick Troubleshooting
 
-| Problem                       | Solution                                         |
-| ----------------------------- | ------------------------------------------------ |
-| **Models not loading**        | Run: `python ml/generate_mock_models.py`         |
-| **Database connection fails** | Verify Railway MySQL credentials in env vars     |
-| **CORS errors**               | Update allowed origins in `ml/serve.py`          |
-| **PHP API not found**         | Check Railway deployment logs                    |
-| **Frontend shows errors**     | Update API URLs in `portal/js/main.js`      |
+| Problem                       | Solution                                     |
+| ----------------------------- | -------------------------------------------- |
+| **Models not loading**        | Run: `python ml/generate_mock_models.py`     |
+| **Database connection fails** | Verify Railway MySQL credentials in env vars |
+| **CORS errors**               | Update allowed origins in `ml/serve.py`      |
+| **PHP API not found**         | Check Railway deployment logs                |
+| **Frontend shows errors**     | Update API URLs in `portal/js/main.js`       |
 
 ---
 

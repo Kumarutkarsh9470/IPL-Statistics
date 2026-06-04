@@ -6,15 +6,16 @@
 
 ## 📋 Quick Summary - 100% FREE
 
-| Service                 | Provider             | Free Tier           | Cost      |
-| ----------------------- | -------------------- | ------------------- | --------- |
-| Frontend (HTML/CSS/JS)  | **Vercel**           | ✅ Yes              | $0/mo     |
-| ML API (Python/FastAPI) | **Vercel Functions** | ✅ Yes              | $0/mo     |
-| PHP Backend             | **Railway**          | ✅ $5/mo credit     | $0/mo     |
-| MySQL Database          | **Pick One Below**   | ✅ Yes              | $0/mo     |
-| **Total**               |                      |                     | **$0/mo** |
+| Service                 | Provider             | Free Tier       | Cost      |
+| ----------------------- | -------------------- | --------------- | --------- |
+| Frontend (HTML/CSS/JS)  | **Vercel**           | ✅ Yes          | $0/mo     |
+| ML API (Python/FastAPI) | **Vercel Functions** | ✅ Yes          | $0/mo     |
+| PHP Backend             | **Railway**          | ✅ $5/mo credit | $0/mo     |
+| MySQL Database          | **Pick One Below**   | ✅ Yes          | $0/mo     |
+| **Total**               |                      |                 | **$0/mo** |
 
 ### **Free Database Options** (Choose 1)
+
 - **Option A:** Railway ($5 credit covers DB) ⭐ RECOMMENDED
 - **Option B:** Render.com (PostgreSQL free tier)
 - **Option C:** Google Cloud SQL (free tier)
@@ -58,23 +59,26 @@ git push origin main
 **Most convenient - all services on one platform!**
 
 ##### 1.1 Create Railway Account & Get Free Credit
+
 1. Go to https://railway.app
 2. Sign up with GitHub
 3. You automatically get **$5/month** free credit (enough for MySQL + PHP backend)
 
 ##### 1.2 Create MySQL Database on Railway
+
 1. In Railway dashboard → **New Project**
 2. Click **Add Service** → **MySQL**
 3. Railway auto-provisions MySQL database
 4. Click on MySQL service → **Variables**
 5. Note these credentials:
    - `MYSQL_HOST`
-   - `MYSQL_PORT` 
+   - `MYSQL_PORT`
    - `MYSQL_USER`
    - `MYSQL_PASSWORD`
    - `MYSQL_DATABASE`
 
 ##### 1.3 Access MySQL Database
+
 ```bash
 # Install MySQL client (if not already)
 # Then connect via Railway connection string
@@ -148,6 +152,7 @@ ngrok tcp 3306
 Click on PHP service → **Variables**
 
 Add these (from your MySQL database setup in Step 1):
+
 ```
 DB_HOST = <from MySQL Variables>
 DB_PORT = 3306
@@ -307,6 +312,7 @@ RAILWAY_BACKEND_URL=https://your-railway-app.up.railway.app
 ### **Railway (Both PHP Backend + MySQL Database)**
 
 PHP service variables:
+
 ```env
 DB_HOST=<from MySQL Variables tab>
 DB_PORT=3306
@@ -451,6 +457,7 @@ Once everything is deployed and working:
 - **Render.com (Alternative DB):** https://render.com/docs
 
 ### **Alternative Free Database Docs**
+
 - **Google Cloud SQL:** https://cloud.google.com/sql/docs
 - **Ngrok (Local MySQL):** https://ngrok.com/docs
 
