@@ -90,13 +90,29 @@ mysql -h <host> -u <user> -p<password> <database> < ipl_db_backup.sql
 
 ##### 1.4 Import the schema using PowerShell
 
-If you have your Railway public MySQL URL or credentials, run this in PowerShell from the project root:
+Railway may provide a proxy host like `acela.proxy.rlyw.net` that is not resolvable from every local network. If the proxy hostname fails to resolve, use your Railway dashboard MySQL host directly or the Railway CLI's `connect` feature.
+
+Option 1: Use a full connection URL
 
 ```powershell
 python .\scripts\import_railway_schema.py --url "mysql://root:1xGfmgQrmppcbRCPvBKgEyQ0ejkGrlzy@acela.proxy.rlyw.net:47555/railway"
 ```
 
-If your URL includes a different database name, replace the URL accordingly.
+Option 2: Use explicit host/port/user/database parameters
+
+```powershell
+python .\scripts\import_railway_schema.py --host "<your-mysql-host>" --port 47555 --user "root" --password "<password>" --database "railway"
+```
+
+If you are using the Railway CLI, you can also connect first and then import with the host it provides:
+
+```powershell
+railway login
+railway connect mysql
+python .\scripts\import_railway_schema.py --host "<connected-host>" --port <connected-port> --user "<user>" --password "<password>" --database "<database>"
+```
+
+If the proxy host is still unreachable, use the Railway dashboard to verify your MySQL service host and port, or consider deploying using a database provider with a publicly accessible host.
 
 **✅ Done! Save credentials for later.**
 

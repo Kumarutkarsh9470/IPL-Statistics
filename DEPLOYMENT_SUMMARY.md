@@ -212,7 +212,8 @@ If your structure is different, update `Procfile` accordingly.
 | Problem                       | Solution                                     |
 | ----------------------------- | -------------------------------------------- |
 | **Models not loading**        | Run: `python ml/generate_mock_models.py`     |
-| **Database connection fails** | Verify Railway MySQL credentials in env vars |
+| **Database connection fails** | Verify Railway MySQL credentials in env vars and ensure the Railway host is reachable from your network |
+| **Railway proxy host fails**  | Use the Railway dashboard host or `railway connect mysql` instead of a proxy URL |
 | **CORS errors**               | Update allowed origins in `ml/serve.py`      |
 | **PHP API not found**         | Check Railway deployment logs                |
 | **Frontend shows errors**     | Update API URLs in `portal/js/main.js`       |

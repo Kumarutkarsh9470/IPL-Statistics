@@ -3,7 +3,7 @@
   "framework": "python",
   "outputDirectory": ".",
   "functions": {
-    "api/ml/*.py": {
+    "api/*.py": {
       "runtime": "python3.12"
     }
   },

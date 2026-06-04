@@ -19,9 +19,13 @@ def parse_args():
     )
     parser.add_argument(
         "--url",
-        required=True,
         help="Full MySQL connection URL, e.g. mysql://root:pwd@host:port/railway",
     )
+    parser.add_argument("--host", help="MySQL host")
+    parser.add_argument("--port", type=int, default=3306, help="MySQL port")
+    parser.add_argument("--user", help="MySQL user")
+    parser.add_argument("--password", help="MySQL password")
+    parser.add_argument("--database", help="MySQL database name")
     parser.add_argument(
         "--schema",
         default="database design/mysql_schema.sql",
@@ -36,24 +40,42 @@ def main():
     if not schema_path.exists():
         raise FileNotFoundError(f"Schema file not found: {schema_path}")
 
-    parsed = urlparse(args.url)
-    if parsed.scheme not in ("mysql", "mysql+mysqlconnector"):
-        raise ValueError("URL must begin with mysql:// or mysql+mysqlconnector://")
+    if args.url:
+        parsed = urlparse(args.url)
+        if parsed.scheme not in ("mysql", "mysql+mysqlconnector"):
+            raise ValueError("URL must begin with mysql:// or mysql+mysqlconnector://")
 
-    user = parsed.username
-    password = parsed.password or ""
-    host = parsed.hostname
-    port = parsed.port or 3306
-    database = parsed.path.lstrip("/") or None
+        user = parsed.username
+        password = parsed.password or ""
+        host = parsed.hostname
+        port = parsed.port or 3306
+        database = parsed.path.lstrip("/") or None
+    else:
+        if not args.host or not args.user or not args.database:
+            raise ValueError(
+                "Either --url or --host/--user/--database must be provided."
+            )
+        user = args.user
+        password = args.password or ""
+        host = args.host
+        port = args.port
+        database = args.database
 
     print(f"Connecting to MySQL host={host} port={port} user={user}")
-    connection = mysql.connector.connect(
-        host=host,
-        port=port,
-        user=user,
-        password=password,
-        database=database,
-    )
+    try:
+        connection = mysql.connector.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            database=database,
+        )
+    except mysql.connector.Error as err:
+        print(f"ERROR: Could not connect to MySQL: {err}")
+        print(
+            "Check that the host is reachable, the port is correct, and the credentials are valid."
+        )
+        raise
 
     sql = schema_path.read_text(encoding="utf-8")
     statements = [stmt.strip() for stmt in sql.split(";") if stmt.strip()]
