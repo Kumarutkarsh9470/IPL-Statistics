@@ -1,15 +1,5 @@
 {
-  "buildCommand": "bash build.sh",
-  "framework": "python",
-  "outputDirectory": ".",
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/portal/index.html"
-    }
+    { "source": "/(.*)", "destination": "/portal/index.html" }
   ]
 }
