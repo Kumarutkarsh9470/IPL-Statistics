@@ -1,29 +1,34 @@
 # 🚀 IPL Analytics - Free Deployment Guide (Option A)
 
-**Architecture:** Frontend (Vercel) + Python ML API (Vercel) + PHP Backend (Railway) + Database (Planet Scale)
+**Architecture:** Frontend (Vercel) + Python ML API (Vercel) + PHP Backend (Railway) + Database (FREE Options Below)
 
 ---
 
-## 📋 Quick Summary
+## 📋 Quick Summary - 100% FREE
 
 | Service                 | Provider             | Free Tier           | Cost      |
 | ----------------------- | -------------------- | ------------------- | --------- |
 | Frontend (HTML/CSS/JS)  | **Vercel**           | ✅ Yes              | $0/mo     |
 | ML API (Python/FastAPI) | **Vercel Functions** | ✅ Yes              | $0/mo     |
-| PHP Backend             | **Railway**          | ✅ Yes (500 hrs/mo) | $0/mo     |
-| MySQL Database          | **Planet Scale**     | ✅ Yes              | $0/mo     |
+| PHP Backend             | **Railway**          | ✅ $5/mo credit     | $0/mo     |
+| MySQL Database          | **Pick One Below**   | ✅ Yes              | $0/mo     |
 | **Total**               |                      |                     | **$0/mo** |
+
+### **Free Database Options** (Choose 1)
+- **Option A:** Railway ($5 credit covers DB) ⭐ RECOMMENDED
+- **Option B:** Render.com (PostgreSQL free tier)
+- **Option C:** Google Cloud SQL (free tier)
+- **Option D:** Local MySQL + Ngrok (expose locally)
 
 ---
 
 ## 🗂️ Pre-Deployment Checklist
 
 - [x] ✅ Mock ML models generated
-- [ ] GitHub repository pushed
+- [x] ✅ GitHub repository pushed
 - [ ] Vercel account created
 - [ ] Railway account created
-- [ ] Planet Scale account created
-- [ ] Database migrated to Planet Scale
+- [ ] Database set up (choose option above)
 - [ ] Environment variables configured
 
 ---
@@ -44,109 +49,130 @@ git push origin main
 
 ---
 
-### **STEP 1: Set Up Planet Scale Database (10 minutes)**
+### **STEP 1: Set Up Free Database** (10-15 minutes)
 
-**What:** Managed MySQL hosting (free tier: 5 GB storage, 10M monthly reads)
+**Choose your free database option:**
 
-#### 1.1 Create Account
+#### **Option A: Railway (RECOMMENDED) - Includes $5/mo free credit**
 
-1. Go to https://planetscale.com
-2. Sign up with GitHub (easier)
-3. Verify email
+**Most convenient - all services on one platform!**
 
-#### 1.2 Create Database
-
-1. Click **Create Database**
-2. Database name: `ipl-db`
-3. Region: Choose closest to your users
-4. Pricing: **Free tier**
-5. Click **Create database**
-
-#### 1.3 Export Local MySQL
-
-```bash
-# From your machine (requires MySQL installed)
-mysqldump -u ipl_user -ppassword123 ipl_db > ipl_db_backup.sql
-```
-
-#### 1.4 Import to Planet Scale
-
-1. Open Planet Scale database dashboard
-2. Click **Branches** → **main**
-3. Click **Import data**
-4. Upload `ipl_db_backup.sql` or use SQL client
-
-#### 1.5 Get Connection String
-
-1. In Planet Scale dashboard, click **Connect**
-2. Select **Node.js** driver
-3. Copy the connection string (looks like: `mysql://username:password@host/database`)
-4. **Save this** — you'll need it later
-
----
-
-### **STEP 2: Deploy PHP Backend to Railway (15 minutes)**
-
-**What:** PHP hosting for your Portal APIs
-
-#### 2.1 Create Railway Account
-
+##### 1.1 Create Railway Account & Get Free Credit
 1. Go to https://railway.app
 2. Sign up with GitHub
-3. Authorize access to your repositories
+3. You automatically get **$5/month** free credit (enough for MySQL + PHP backend)
 
-#### 2.2 Deploy PHP Service
+##### 1.2 Create MySQL Database on Railway
+1. In Railway dashboard → **New Project**
+2. Click **Add Service** → **MySQL**
+3. Railway auto-provisions MySQL database
+4. Click on MySQL service → **Variables**
+5. Note these credentials:
+   - `MYSQL_HOST`
+   - `MYSQL_PORT` 
+   - `MYSQL_USER`
+   - `MYSQL_PASSWORD`
+   - `MYSQL_DATABASE`
 
-1. In Railway, click **Create Project**
-2. Select **Deploy from GitHub repo**
-3. Choose your `IPL-Statistics` repository
-4. Select **PHP** as the environment
+##### 1.3 Access MySQL Database
+```bash
+# Install MySQL client (if not already)
+# Then connect via Railway connection string
+mysql -h <host> -u <user> -p<password> <database>
 
-#### 2.3 Configure Environment Variables
-
-In Railway dashboard:
-
-```
-DB_HOST = <planet_scale_host>
-DB_PORT = 3306
-DB_USER = <planet_scale_username>
-DB_PASSWORD = <planet_scale_password>
-DB_NAME = ipl_db
-```
-
-#### 2.4 Set Startup Command
-
-In Railway **Settings**:
-
-```
-Start Command: php -S 0.0.0.0:8080 -t portal/backend
+# Or import your backup
+mysql -h <host> -u <user> -p<password> <database> < ipl_db_backup.sql
 ```
 
-Or create `Procfile`:
-
-```
-web: php -S 0.0.0.0:$PORT -t portal/backend
-```
-
-#### 2.5 Get Railway URL
-
-1. Click **Deployments**
-2. Find the public URL (example: `https://your-app.up.railway.app`)
-3. **Save this** — API endpoints will be: `https://your-app.up.railway.app/api/...`
+**✅ Done! Save credentials for later.**
 
 ---
 
-### **STEP 3: Deploy ML API to Vercel (10 minutes)**
+#### **Option B: Render.com - Free PostgreSQL (alternative)**
 
-**What:** Python FastAPI as serverless functions
+If you prefer PostgreSQL instead of MySQL:
 
-#### 3.1 Create Vercel Account
-
-1. Go to https://vercel.com
+1. Go to https://render.com
 2. Sign up with GitHub
-3. Authorize access
+3. Create **New** → **PostgreSQL**
+4. Name: `ipl-db`
+5. Region: US (free tier)
+6. Get connection string
+7. **Note:** You'll need to adapt PHP to PostgreSQL or use docker
 
-#### 3.2 Deploy Project
+---
+
+#### **Option C: Google Cloud SQL - Free tier with limits**
+
+1. Go to https://console.cloud.google.com
+2. Create new project
+3. Enable Cloud SQL API
+4. Create MySQL instance
+5. Free tier includes 1 small MySQL instance
+6. Get credentials from Connection Details
+7. **Note:** Requires credit card, but first $300 credit covers this
+
+---
+
+#### **Option D: Local MySQL + Ngrok - For development**
+
+If you already have MySQL running locally:
+
+```bash
+# Install Ngrok (expose local MySQL)
+npm install -g ngrok
+# or download from https://ngrok.com
+
+# Expose port 3306
+ngrok tcp 3306
+
+# This gives public URL to your local MySQL
+# Use in production APIs
+```
+
+---
+
+### **STEP 2: Deploy PHP Backend to Railway** (15 minutes)
+
+**Same Railway account as database!**
+
+#### 2.1 Add PHP Service to Railway
+
+1. In Railway, go to your existing project
+2. Click **Add Service** → **GitHub Repo**
+3. Select `IPL-Statistics` repository
+4. Select **PHP** environment
+
+#### 2.2 Configure Environment Variables
+
+Click on PHP service → **Variables**
+
+Add these (from your MySQL database setup in Step 1):
+```
+DB_HOST = <from MySQL Variables>
+DB_PORT = 3306
+DB_USER = <from MySQL Variables>
+DB_PASSWORD = <from MySQL Variables>
+DB_NAME = <database name>
+```
+
+#### 2.3 Set Startup Command
+
+Click PHP service → **Settings** → **Start Command**
+
+```
+php -S 0.0.0.0:$PORT -t portal/backend
+```
+
+#### 2.4 Get Railway Public URL
+
+- Click **Deployments**
+- Find PHP service public URL (e.g., `https://your-app.up.railway.app`)
+- **Save this** — will use for frontend API calls
+
+---
+
+### **STEP 3: Deploy ML API to Vercel** (10 minutes)
 
 1. Click **Add New Project**
 2. Select your GitHub repository `IPL-Statistics`
@@ -256,10 +282,11 @@ https://ipl-portal.vercel.app/
          │                          │
          └──────────────┬───────────┘
                         ↓
-             ┌──────────────────────┐
-             │  Planet Scale MySQL  │
-             │  ipl-db              │
-             └──────────────────────┘
+        ┌──────────────────────────────┐
+        │   Railway MySQL Database      │
+        │  (Using $5/mo free credit)    │
+        │   ipl-db                      │
+        └──────────────────────────────┘
 ```
 
 ---
@@ -269,22 +296,23 @@ https://ipl-portal.vercel.app/
 ### **Vercel (Python ML API)**
 
 ```env
-DB_HOST=your-db.psdb.cloud
+DB_HOST=<railway-mysql-host>
 DB_PORT=3306
-DB_USER=xxxxx
-DB_PASSWORD=xxxxx
-DB_NAME=ipl_db
+DB_USER=<railway-mysql-user>
+DB_PASSWORD=<railway-mysql-password>
+DB_NAME=<railway-mysql-database>
 RAILWAY_BACKEND_URL=https://your-railway-app.up.railway.app
 ```
 
-### **Railway (PHP Backend)**
+### **Railway (Both PHP Backend + MySQL Database)**
 
+PHP service variables:
 ```env
-DB_HOST=your-db.psdb.cloud
+DB_HOST=<from MySQL Variables tab>
 DB_PORT=3306
-DB_USER=xxxxx
-DB_PASSWORD=xxxxx
-DB_NAME=ipl_db
+DB_USER=<from MySQL Variables tab>
+DB_PASSWORD=<from MySQL Variables tab>
+DB_NAME=<from MySQL Variables tab>
 ```
 
 ### **Local Development (.env)**
@@ -418,15 +446,21 @@ Once everything is deployed and working:
 
 - **Vercel Docs:** https://vercel.com/docs
 - **Railway Docs:** https://docs.railway.app
-- **Planet Scale Docs:** https://planetscale.com/docs
+- **Railway MySQL:** https://docs.railway.app/guides/mysql
 - **FastAPI Docs:** https://fastapi.tiangolo.com
+- **Render.com (Alternative DB):** https://render.com/docs
+
+### **Alternative Free Database Docs**
+- **Google Cloud SQL:** https://cloud.google.com/sql/docs
+- **Ngrok (Local MySQL):** https://ngrok.com/docs
 
 ---
 
 ## ✅ Deployment Checklist
 
 - [ ] GitHub repository up to date
-- [ ] Planet Scale database created and migrated
+- [ ] Railway account created (get $5/mo free credit)
+- [ ] Railway MySQL database created
 - [ ] Railway PHP backend deployed
 - [ ] Vercel ML API deployed
 - [ ] Vercel frontend deployed
@@ -444,4 +478,6 @@ Once everything is deployed and working:
 Frontend: https://ipl-portal.vercel.app
 ML API: https://ipl-stats.vercel.app
 PHP API: https://your-app.up.railway.app
+Database: Railway MySQL (free with $5 credit)
+Total Cost: $0/month
 ```

@@ -58,8 +58,8 @@
          └───────────┬───────────┘
                      ↓
            ┌──────────────────────┐
-           │  Planet Scale MySQL  │
-           │  ipl-db (free)       │
+           │  Railway MySQL       │
+           │  (FREE with credit)  │
            └──────────────────────┘
 ```
 
@@ -78,26 +78,25 @@ git push origin main
 ### **STEP 2: Create Accounts** (5 minutes)
 
 - [ ] Vercel: https://vercel.com (free)
-- [ ] Railway: https://railway.app (free)
-- [ ] Planet Scale: https://planetscale.com (free)
+- [ ] Railway: https://railway.app (free, auto get $5/mo credit)
 
 ### **STEP 3: Set Up Database** (10 minutes)
 
 Follow **DEPLOYMENT.md STEP 1**:
 
-- Create Planet Scale database
-- Export local MySQL data
-- Import to Planet Scale
+- Create Railway account (get $5/mo free credit)
+- Add MySQL service to Railway
+- Get credentials from Railway Variables
 - Save connection string
 
 ### **STEP 4: Deploy PHP Backend** (15 minutes)
 
 Follow **DEPLOYMENT.md STEP 2**:
 
-- Connect Railway to GitHub
-- Set environment variables
+- Add PHP service to existing Railway project
+- Set environment variables from MySQL
 - Deploy
-- Get Railway URL
+- Get Railway PHP URL
 
 ### **STEP 5: Deploy ML API** (10 minutes)
 
@@ -134,22 +133,28 @@ When deploying, save these:
 Vercel Frontend URL:    https://___________
 Vercel ML API URL:      https://___________
 Railway PHP URL:        https://___________
-Planet Scale Host:      ___________
-Planet Scale Username:  ___________
-Planet Scale Password:  ___________
+Railway MySQL Host:     ___________
+Railway MySQL User:     ___________
+Railway MySQL Password: ___________
 ```
-
 ---
 
-## 💰 Cost Breakdown
+## 💰 Cost Breakdown - 100% FREE
 
-| Service                   | Free Tier                    | Cost         |
+| Service                   | Free Tier/Credit             | Cost         |
 | ------------------------- | ---------------------------- | ------------ |
 | Vercel (Frontend)         | ∞ requests, 100 GB bandwidth | $0           |
 | Vercel Functions (ML API) | 1M invocations/month         | $0           |
-| Railway                   | 500 hours/month              | $0           |
-| Planet Scale              | 5 GB storage                 | $0           |
+| Railway (PHP Backend)     | $5/month free credit         | $0           |
+| Railway MySQL Database    | Included in $5 credit        | $0           |
 | **TOTAL**                 |                              | **$0/month** |
+
+**Note:** Railway gives **$5/month free credit** - enough to run PHP + MySQL for small projects.
+
+### Alternative Free Database Options:
+- **Render.com** - PostgreSQL free tier
+- **Google Cloud SQL** - Free tier (requires credit card)
+- **Supabase** - PostgreSQL free tier
 
 ---
 
@@ -176,11 +181,16 @@ The generated models are **placeholders for testing only**. They use random data
 
 ### Database Migration
 
-For first deployment, you need to:
+For first deployment using Railway:
 
-1. Export local MySQL data (if you have it)
-2. Import to Planet Scale
-3. If you don't have local data, create empty schema using `mysql_schema.sql`
+1. Create Railway account (automatic $5/mo credit)
+2. Add MySQL service to Railway
+3. Get connection credentials from Railway MySQL Variables
+4. Connect to Railway MySQL and import data:
+   ```bash
+   mysql -h <railway-host> -u <user> -p<password> <database> < ipl_db_backup.sql
+   ```
+5. Or use `mysql_schema.sql` to create empty schema
 
 ### PHP File Structure
 
@@ -189,6 +199,7 @@ Railway expects:
 - API routes in `portal/backend/api/` folder
 - `portal/backend/db.php` for database connection
 - Each API file returns JSON
+- Procfile with PHP startup command
 
 If your structure is different, update `Procfile` accordingly.
 
@@ -196,12 +207,12 @@ If your structure is different, update `Procfile` accordingly.
 
 ## 🆘 Quick Troubleshooting
 
-| Problem                       | Solution                                    |
-| ----------------------------- | ------------------------------------------- |
-| **Models not loading**        | Run: `python ml/generate_mock_models.py`    |
-| **Database connection fails** | Verify Planet Scale credentials in env vars |
-| **CORS errors**               | Update allowed origins in `ml/serve.py`     |
-| **PHP API not found**         | Check Railway deployment logs               |
+| Problem                       | Solution                                         |
+| ----------------------------- | ------------------------------------------------ |
+| **Models not loading**        | Run: `python ml/generate_mock_models.py`         |
+| **Database connection fails** | Verify Railway MySQL credentials in env vars     |
+| **CORS errors**               | Update allowed origins in `ml/serve.py`          |
+| **PHP API not found**         | Check Railway deployment logs                    |
 | **Frontend shows errors**     | Update API URLs in `portal/js/main.js`      |
 
 ---
@@ -219,7 +230,7 @@ If your structure is different, update `Procfile` accordingly.
 1. **Monitor Performance**
    - Vercel: Dashboard → Analytics
    - Railway: Dashboard → Logs
-   - Planet Scale: Dashboard → Query Insights
+   - Railway MySQL: Dashboard → MySQL service logs
 
 2. **Collect Real Data**
    - Get IPL CSV dataset
@@ -227,7 +238,7 @@ If your structure is different, update `Procfile` accordingly.
    - Redeploy with `git push`
 
 3. **Optimize & Scale**
-   - If traffic exceeds free tier, upgrade to paid
+   - If $5 credit isn't enough, upgrade Railway to paid plan
    - Add caching for frequently accessed data
    - Consider moving models to S3 for faster loading
 
