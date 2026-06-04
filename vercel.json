@@ -25,11 +25,5 @@
     "DB_NAME": "@db_name",
     "FASTAPI_HOST": "0.0.0.0",
     "FASTAPI_PORT": "8000"
-  },
-  "buildIgnore": [
-    "data/raw/**",
-    "EDA/**",
-    "*.ipynb",
-    ".pytest_cache/**"
-  ]
+  }
 }
