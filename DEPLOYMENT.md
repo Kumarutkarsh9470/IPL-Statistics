@@ -95,8 +95,10 @@ Railway may provide a proxy host like `acela.proxy.rlyw.net` that is not resolva
 Option 1: Use a full connection URL
 
 ```powershell
-python .\scripts\import_railway_schema.py --url "mysql://root:1xGfmgQrmppcbRCPvBKgEyQ0ejkGrlzy@acela.proxy.rlyw.net:47555/railway"
+python .\scripts\import_railway_schema.py --url "mysql://root:REAL_PASSWORD@REAL_HOST:REAL_PORT/REAL_DATABASE"
 ```
+
+> Do not leave `<password>`, `<host>`, `<port>`, or `<database>` in the command. Replace them with your real values.
 
 Option 2: Use explicit host/port/user/database parameters
 
@@ -113,6 +115,8 @@ python .\scripts\import_railway_schema.py --host "<connected-host>" --port <conn
 ```
 
 If the proxy host is still unreachable, use the Railway dashboard to verify your MySQL service host and port, or consider deploying using a database provider with a publicly accessible host.
+
+If you see an error like `ValueError: Port could not be cast to integer value as '<port>'`, it means you left a placeholder in the URL. Replace the placeholder with a real numeric port value.
 
 **✅ Done! Save credentials for later.**
 

@@ -13,6 +13,21 @@ from urllib.parse import urlparse
 import mysql.connector
 
 
+def _validate_no_placeholders(name, value):
+    if not value:
+        return value
+    if value.startswith("<") and value.endswith(">"):
+        raise ValueError(
+            f"{name} contains a placeholder. Replace it with your actual credential or host."
+        )
+    lowered = value.lower()
+    if lowered.startswith("your") or "<" in value or ">" in value:
+        raise ValueError(
+            f"{name} contains a placeholder-like value. Replace it with a real value."
+        )
+    return value
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Import the IPL schema into Railway MySQL."
@@ -45,21 +60,26 @@ def main():
         if parsed.scheme not in ("mysql", "mysql+mysqlconnector"):
             raise ValueError("URL must begin with mysql:// or mysql+mysqlconnector://")
 
-        user = parsed.username
-        password = parsed.password or ""
-        host = parsed.hostname
-        port = parsed.port or 3306
-        database = parsed.path.lstrip("/") or None
+        user = _validate_no_placeholders("URL user", parsed.username or "")
+        password = _validate_no_placeholders("URL password", parsed.password or "")
+        host = _validate_no_placeholders("URL host", parsed.hostname or "")
+        database = _validate_no_placeholders("URL database", parsed.path.lstrip("/") or "")
+        try:
+            port = parsed.port or 3306
+        except ValueError:
+            raise ValueError(
+                "URL port is invalid. Replace the placeholder with a real numeric port value."
+            )
     else:
         if not args.host or not args.user or not args.database:
             raise ValueError(
                 "Either --url or --host/--user/--database must be provided."
             )
-        user = args.user
-        password = args.password or ""
-        host = args.host
+        user = _validate_no_placeholders("host user", args.user)
+        password = _validate_no_placeholders("host password", args.password or "")
+        host = _validate_no_placeholders("host", args.host)
+        database = _validate_no_placeholders("database", args.database)
         port = args.port
-        database = args.database
 
     print(f"Connecting to MySQL host={host} port={port} user={user}")
     try:
