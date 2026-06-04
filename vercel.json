@@ -2,11 +2,6 @@
   "buildCommand": "bash build.sh",
   "framework": "python",
   "outputDirectory": ".",
-  "functions": {
-    "api/*.py": {
-      "runtime": "python3.12"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
