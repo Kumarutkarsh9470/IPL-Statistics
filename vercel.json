@@ -16,14 +16,5 @@
       "source": "/(.*)",
       "destination": "/portal/index.html"
     }
-  ],
-  "env": {
-    "DB_HOST": "@db_host",
-    "DB_PORT": "@db_port",
-    "DB_USER": "@db_user",
-    "DB_PASSWORD": "@db_password",
-    "DB_NAME": "@db_name",
-    "FASTAPI_HOST": "0.0.0.0",
-    "FASTAPI_PORT": "8000"
-  }
+  ]
 }
