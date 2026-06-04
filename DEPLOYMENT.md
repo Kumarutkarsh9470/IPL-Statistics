@@ -6,13 +6,13 @@
 
 ## 📋 Quick Summary
 
-| Service | Provider | Free Tier | Cost |
-|---------|----------|-----------|------|
-| Frontend (HTML/CSS/JS) | **Vercel** | ✅ Yes | $0/mo |
-| ML API (Python/FastAPI) | **Vercel Functions** | ✅ Yes | $0/mo |
-| PHP Backend | **Railway** | ✅ Yes (500 hrs/mo) | $0/mo |
-| MySQL Database | **Planet Scale** | ✅ Yes | $0/mo |
-| **Total** | | | **$0/mo** |
+| Service                 | Provider             | Free Tier           | Cost      |
+| ----------------------- | -------------------- | ------------------- | --------- |
+| Frontend (HTML/CSS/JS)  | **Vercel**           | ✅ Yes              | $0/mo     |
+| ML API (Python/FastAPI) | **Vercel Functions** | ✅ Yes              | $0/mo     |
+| PHP Backend             | **Railway**          | ✅ Yes (500 hrs/mo) | $0/mo     |
+| MySQL Database          | **Planet Scale**     | ✅ Yes              | $0/mo     |
+| **Total**               |                      |                     | **$0/mo** |
 
 ---
 
@@ -49,11 +49,13 @@ git push origin main
 **What:** Managed MySQL hosting (free tier: 5 GB storage, 10M monthly reads)
 
 #### 1.1 Create Account
+
 1. Go to https://planetscale.com
 2. Sign up with GitHub (easier)
 3. Verify email
 
 #### 1.2 Create Database
+
 1. Click **Create Database**
 2. Database name: `ipl-db`
 3. Region: Choose closest to your users
@@ -61,18 +63,21 @@ git push origin main
 5. Click **Create database**
 
 #### 1.3 Export Local MySQL
+
 ```bash
 # From your machine (requires MySQL installed)
 mysqldump -u ipl_user -ppassword123 ipl_db > ipl_db_backup.sql
 ```
 
 #### 1.4 Import to Planet Scale
+
 1. Open Planet Scale database dashboard
 2. Click **Branches** → **main**
 3. Click **Import data**
 4. Upload `ipl_db_backup.sql` or use SQL client
 
 #### 1.5 Get Connection String
+
 1. In Planet Scale dashboard, click **Connect**
 2. Select **Node.js** driver
 3. Copy the connection string (looks like: `mysql://username:password@host/database`)
@@ -85,17 +90,20 @@ mysqldump -u ipl_user -ppassword123 ipl_db > ipl_db_backup.sql
 **What:** PHP hosting for your Portal APIs
 
 #### 2.1 Create Railway Account
+
 1. Go to https://railway.app
 2. Sign up with GitHub
 3. Authorize access to your repositories
 
 #### 2.2 Deploy PHP Service
+
 1. In Railway, click **Create Project**
 2. Select **Deploy from GitHub repo**
 3. Choose your `IPL-Statistics` repository
 4. Select **PHP** as the environment
 
 #### 2.3 Configure Environment Variables
+
 In Railway dashboard:
 
 ```
@@ -107,17 +115,21 @@ DB_NAME = ipl_db
 ```
 
 #### 2.4 Set Startup Command
+
 In Railway **Settings**:
+
 ```
 Start Command: php -S 0.0.0.0:8080 -t portal/backend
 ```
 
 Or create `Procfile`:
+
 ```
 web: php -S 0.0.0.0:$PORT -t portal/backend
 ```
 
 #### 2.5 Get Railway URL
+
 1. Click **Deployments**
 2. Find the public URL (example: `https://your-app.up.railway.app`)
 3. **Save this** — API endpoints will be: `https://your-app.up.railway.app/api/...`
@@ -129,16 +141,19 @@ web: php -S 0.0.0.0:$PORT -t portal/backend
 **What:** Python FastAPI as serverless functions
 
 #### 3.1 Create Vercel Account
+
 1. Go to https://vercel.com
 2. Sign up with GitHub
 3. Authorize access
 
 #### 3.2 Deploy Project
+
 1. Click **Add New Project**
 2. Select your GitHub repository `IPL-Statistics`
 3. Vercel auto-detects as Python project
 
 #### 3.3 Configure Environment Variables
+
 In Vercel **Environment Variables**:
 
 ```
@@ -151,11 +166,13 @@ RAILWAY_BACKEND_URL = https://your-railway-app.up.railway.app
 ```
 
 #### 3.4 Deploy
+
 1. Click **Deploy**
 2. Wait for build to complete (2-3 minutes)
 3. Get Vercel URL (example: `https://ipl-stats.vercel.app`)
 
 #### 3.5 Test ML API
+
 ```bash
 # Health check
 curl https://ipl-stats.vercel.app/api/health
@@ -180,13 +197,15 @@ const PHP_API = "http://localhost/api/";
 const ML_API = "http://localhost:8000/api/predict/";
 
 // After:
-const PHP_API = window.location.hostname === 'localhost' 
-  ? 'http://localhost/api/' 
-  : 'https://your-railway-app.up.railway.app/api/';
+const PHP_API =
+  window.location.hostname === "localhost"
+    ? "http://localhost/api/"
+    : "https://your-railway-app.up.railway.app/api/";
 
-const ML_API = window.location.hostname === 'localhost'
-  ? 'http://localhost:8000/api/predict/'
-  : 'https://ipl-stats.vercel.app/api/predict/';
+const ML_API =
+  window.location.hostname === "localhost"
+    ? "http://localhost:8000/api/predict/"
+    : "https://ipl-stats.vercel.app/api/predict/";
 ```
 
 #### 4.2 Update HTML References
@@ -194,19 +213,23 @@ const ML_API = window.location.hostname === 'localhost'
 **File:** `portal/index.html`
 
 Make sure all CSS/JS paths are relative (they should be):
+
 ```html
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css" />
 <script src="js/main.js"></script>
 ```
 
 #### 4.3 Deploy Frontend
+
 In Vercel:
+
 1. Create **New Project**
 2. Select repository
 3. **Root Directory:** `portal`
 4. Click **Deploy**
 
 #### 4.4 Access Your Application
+
 ```
 https://ipl-portal.vercel.app/
 ```
@@ -244,6 +267,7 @@ https://ipl-portal.vercel.app/
 ## 🔑 Environment Variables Reference
 
 ### **Vercel (Python ML API)**
+
 ```env
 DB_HOST=your-db.psdb.cloud
 DB_PORT=3306
@@ -254,6 +278,7 @@ RAILWAY_BACKEND_URL=https://your-railway-app.up.railway.app
 ```
 
 ### **Railway (PHP Backend)**
+
 ```env
 DB_HOST=your-db.psdb.cloud
 DB_PORT=3306
@@ -263,6 +288,7 @@ DB_NAME=ipl_db
 ```
 
 ### **Local Development (.env)**
+
 ```env
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -278,6 +304,7 @@ FASTAPI_PORT=8000
 ## 🧪 Testing Your Deployment
 
 ### **Test Database Connection**
+
 ```bash
 # From your local machine
 python -c "
@@ -288,11 +315,13 @@ print('✅ Database connected')
 ```
 
 ### **Test ML API**
+
 ```bash
 curl https://ipl-stats.vercel.app/api/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "ok",
@@ -307,6 +336,7 @@ Expected response:
 ```
 
 ### **Test Frontend**
+
 1. Open https://ipl-portal.vercel.app
 2. Navigate to different tabs
 3. Check browser console (F12) for API errors
@@ -316,14 +346,17 @@ Expected response:
 ## 📊 Monitoring & Logs
 
 ### **Vercel Logs**
+
 ```bash
 vercel logs <project-name>
 ```
 
 ### **Railway Logs**
+
 Dashboard → Select Project → **Logs**
 
 ### **Planet Scale**
+
 Dashboard → Select Database → **Query Insights** / **Logs**
 
 ---
@@ -331,21 +364,25 @@ Dashboard → Select Database → **Query Insights** / **Logs**
 ## 🆘 Troubleshooting
 
 ### **Issue: "Cannot connect to database"**
+
 - ✅ Check Planet Scale connection string
 - ✅ Verify database credentials in environment variables
 - ✅ Check if IP is whitelisted (Planet Scale allows all by default)
 
 ### **Issue: "ML models not loading"**
+
 - ✅ Verify `ml/models/*.joblib` files exist
 - ✅ Check model file sizes aren't too large for Vercel
 - ✅ Run `python ml/generate_mock_models.py` to regenerate
 
 ### **Issue: "CORS errors in browser"**
+
 - ✅ Update `allow_origins` in `ml/serve.py`
 - ✅ Check Railway and Vercel URLs are correct
 - ✅ Verify frontend is sending correct API URLs
 
 ### **Issue: "PHP backend returns 404"**
+
 - ✅ Check Railway deployment succeeded
 - ✅ Verify API routes are correct: `/api/teams`, `/api/predict`, etc.
 - ✅ Check `.env` variables in Railway dashboard

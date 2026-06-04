@@ -3,32 +3,33 @@
  * Automatically detects environment (local dev, staging, production)
  */
 function getApiEndpoints() {
-    const host = window.location.hostname;
-    const protocol = window.location.protocol;
-    
-    // Local development
-    if (host === 'localhost' || host === '127.0.0.1') {
-        return {
-            PHP_API: 'http://localhost/IPL-statistics-predictions/portal/backend/api/',
-            ML_API: 'http://localhost:8000/api',
-        };
-    }
-    
-    // Production (Vercel frontend + external backends)
-    // Customize these with your actual deployment URLs
+  const host = window.location.hostname;
+  const protocol = window.location.protocol;
+
+  // Local development
+  if (host === "localhost" || host === "127.0.0.1") {
     return {
-        // PHP Backend on Railway
-        PHP_API: 'https://YOUR_RAILWAY_APP.up.railway.app/api/',
-        // ML API on Vercel
-        ML_API: 'https://YOUR_VERCEL_APP.vercel.app/api',
+      PHP_API:
+        "http://localhost/IPL-statistics-predictions/portal/backend/api/",
+      ML_API: "http://localhost:8000/api",
     };
+  }
+
+  // Production (Vercel frontend + external backends)
+  // Customize these with your actual deployment URLs
+  return {
+    // PHP Backend on Railway
+    PHP_API: "https://YOUR_RAILWAY_APP.up.railway.app/api/",
+    // ML API on Vercel
+    ML_API: "https://YOUR_VERCEL_APP.vercel.app/api",
+  };
 }
 
 const APIS = getApiEndpoints();
 const PHP_API_BASE = APIS.PHP_API;
-const ML_API_BASE = APIS.ML_API + '/predict';
+const ML_API_BASE = APIS.ML_API + "/predict";
 
-console.log('📡 API Configuration:', { PHP_API_BASE, ML_API_BASE });
+console.log("📡 API Configuration:", { PHP_API_BASE, ML_API_BASE });
 
 // ============================================================
 
@@ -44,20 +45,20 @@ let matchupPlayerNames = [];
 
 // Team Color Scheme
 const TEAM_COLORS = {
-    'Kolkata Knight Riders': '#9560d4',
-    'Chennai Super Kings': '#FFD700',
-    'Royal Challengers Bengaluru': '#FF4444',
-    'Mumbai Indians': '#ADD8E6',
-    'Delhi Capitals': '#1E3A8A',
-    'Rajasthan Royals': '#FF69B4',
-    'Punjab Kings': '#FFB6C1',
-    'Gujarat Titans': '#40E0D0',
-    'Lucknow Super Giants': '#4169E1',
-    'Sunrisers Hyderabad': '#FF8C00'
+  "Kolkata Knight Riders": "#9560d4",
+  "Chennai Super Kings": "#FFD700",
+  "Royal Challengers Bengaluru": "#FF4444",
+  "Mumbai Indians": "#ADD8E6",
+  "Delhi Capitals": "#1E3A8A",
+  "Rajasthan Royals": "#FF69B4",
+  "Punjab Kings": "#FFB6C1",
+  "Gujarat Titans": "#40E0D0",
+  "Lucknow Super Giants": "#4169E1",
+  "Sunrisers Hyderabad": "#FF8C00",
 };
 
 function getTeamColor(teamName) {
-    return TEAM_COLORS[teamName] || '#45f3ff';
+  return TEAM_COLORS[teamName] || "#45f3ff";
 }
 
 // Charts
@@ -124,12 +125,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const teamPerformanceSel = document.getElementById("team-performance-select");
   if (teamPerformanceSel) {
-    teamPerformanceSel.addEventListener("change", (e) => fetchTeamPerformance(e.target.value));
+    teamPerformanceSel.addEventListener("change", (e) =>
+      fetchTeamPerformance(e.target.value),
+    );
   }
 
   const venueInsightsSel = document.getElementById("venue-insights-select");
   if (venueInsightsSel) {
-    venueInsightsSel.addEventListener("change", (e) => fetchVenueInsights(e.target.value));
+    venueInsightsSel.addEventListener("change", (e) =>
+      fetchVenueInsights(e.target.value),
+    );
   }
 
   const h2h1 = document.getElementById("h2h-team1");
@@ -140,7 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Season Analysis Binds
   const seasonAnalysisSel = document.getElementById("season-analysis-select");
   if (seasonAnalysisSel) {
-    seasonAnalysisSel.addEventListener("change", (e) => fetchSeasonAnalysis(e.target.value));
+    seasonAnalysisSel.addEventListener("change", (e) =>
+      fetchSeasonAnalysis(e.target.value),
+    );
   }
 
   // Predictive Analytics Binds
@@ -394,7 +401,14 @@ async function predictScore() {
   }
 }
 
-function validateScoreInputs({ currentOver, runsScored, wickets, boundaries, dotBalls, extras }) {
+function validateScoreInputs({
+  currentOver,
+  runsScored,
+  wickets,
+  boundaries,
+  dotBalls,
+  extras,
+}) {
   const maxRuns = currentOver * 36;
   const totalBalls = currentOver * 6;
 
@@ -410,7 +424,7 @@ function validateScoreInputs({ currentOver, runsScored, wickets, boundaries, dot
     return `Boundaries + dot balls must be less than ${totalBalls} for ${currentOver} overs.`;
   }
 
-  if (runsScored <= (6 * boundaries) + extras) {
+  if (runsScored <= 6 * boundaries + extras) {
     return "Runs scored must be greater than 6 * boundaries + extras.";
   }
 
@@ -619,7 +633,12 @@ async function runNaturalLanguageQuery(tab, input, button, output, sqlBlock) {
 
     sqlBlock.innerHTML = `<details style="margin-bottom:1rem; padding:0.5rem; background:rgba(0,0,0,0.2); border-radius:4px;"><summary style="cursor:pointer; color:#aaa; font-size:0.9rem;">View Generated SQL</summary><pre style="color:var(--secondary); margin-top:0.5rem; white-space:pre-wrap; font-family:monospace;">${escapeHtml(json.sql)}</pre></details>`;
     sqlBlock.classList.remove("hidden");
-    renderNaturalLanguageResults(output, json.chat_response, json.columns || [], json.rows || []);
+    renderNaturalLanguageResults(
+      output,
+      json.chat_response,
+      json.columns || [],
+      json.rows || [],
+    );
   } catch (err) {
     let msg = err.message || "Failed to process natural language query.";
     if (msg.includes("GROQ_API_KEY")) {
@@ -636,10 +655,15 @@ async function runNaturalLanguageQuery(tab, input, button, output, sqlBlock) {
   }
 }
 
-function renderNaturalLanguageResults(outputElement, chatResponse, columns, rows) {
+function renderNaturalLanguageResults(
+  outputElement,
+  chatResponse,
+  columns,
+  rows,
+) {
   outputElement.classList.remove("hidden");
 
-  let contentHtml = '';
+  let contentHtml = "";
   if (chatResponse) {
     contentHtml += `<div class="nl-chat-response" style="background: rgba(69, 243, 255, 0.1); border-left: 4px solid var(--primary); padding: 1rem; margin-bottom: 1rem; border-radius: 4px; line-height:1.5;">
       <strong style="color:var(--primary); font-size: 1.1em;">Analyst AI:</strong> <span style="font-size: 1.05em;">${escapeHtml(chatResponse)}</span>
@@ -647,7 +671,8 @@ function renderNaturalLanguageResults(outputElement, chatResponse, columns, rows
   }
 
   if (!rows || rows.length === 0) {
-    outputElement.innerHTML = contentHtml +
+    outputElement.innerHTML =
+      contentHtml +
       '<p class="nl-result-empty">No rows returned for this query.</p>';
     return;
   }
@@ -656,7 +681,8 @@ function renderNaturalLanguageResults(outputElement, chatResponse, columns, rows
     columns = Object.keys(rows[0]);
   }
 
-  let tableHtml = '<div class="table-container" style="max-height: 400px; overflow-y: auto;"><table class="premium-table nl-result-table"><thead><tr>';
+  let tableHtml =
+    '<div class="table-container" style="max-height: 400px; overflow-y: auto;"><table class="premium-table nl-result-table"><thead><tr>';
   columns.forEach((col) => {
     tableHtml += `<th>${escapeHtml(col)}</th>`;
   });
@@ -694,7 +720,9 @@ async function fetchTeams() {
     if (json.success) {
       allTeamsData = json.data;
       const teamDropdown = document.getElementById("team-filter");
-      const teamPerformanceSelect = document.getElementById("team-performance-select");
+      const teamPerformanceSelect = document.getElementById(
+        "team-performance-select",
+      );
 
       const predTeam1 = document.getElementById("pred-team1");
       const predTeam2 = document.getElementById("pred-team2");
@@ -777,7 +805,9 @@ async function fetchSeasons() {
     const json = await response.json();
     if (json.success) {
       const seasonFilter = document.getElementById("season-filter");
-      const seasonAnalysisSel = document.getElementById("season-analysis-select");
+      const seasonAnalysisSel = document.getElementById(
+        "season-analysis-select",
+      );
       json.data.forEach((season) => {
         if (seasonFilter) {
           const opt = document.createElement("option");
@@ -803,16 +833,23 @@ async function fetchVenues() {
     if (json.success && Array.isArray(json.data)) {
       allVenuesData = json.data;
       const vs = document.getElementById("toss-venue-select");
-      const venueInsightsSelect = document.getElementById("venue-insights-select");
+      const venueInsightsSelect = document.getElementById(
+        "venue-insights-select",
+      );
       const predVenue1 = document.getElementById("pred-venue");
       const predVenue2 = document.getElementById("pred-score-venue");
       const predVenue3 = document.getElementById("pred-player-venue");
 
       if (vs) vs.innerHTML = '<option value="all">All Venues</option>';
-      if (venueInsightsSelect) venueInsightsSelect.innerHTML = '<option value="">Select Venue</option>';
-      if (predVenue1) predVenue1.innerHTML = '<option value="">Select Venue</option>';
-      if (predVenue2) predVenue2.innerHTML = '<option value="">Select Venue</option>';
-      if (predVenue3) predVenue3.innerHTML = '<option value="">Select Venue</option>';
+      if (venueInsightsSelect)
+        venueInsightsSelect.innerHTML =
+          '<option value="">Select Venue</option>';
+      if (predVenue1)
+        predVenue1.innerHTML = '<option value="">Select Venue</option>';
+      if (predVenue2)
+        predVenue2.innerHTML = '<option value="">Select Venue</option>';
+      if (predVenue3)
+        predVenue3.innerHTML = '<option value="">Select Venue</option>';
 
       const dropdowns = [predVenue1, predVenue2, predVenue3].filter(Boolean);
 
@@ -868,7 +905,8 @@ async function fetchVenueInsights(venueId) {
   const conditionsBox = document.getElementById("venue-insights-conditions");
   const recentBody = document.getElementById("venue-insights-recent-body");
 
-  if (!loader || !content || !overallBox || !conditionsBox || !recentBody) return;
+  if (!loader || !content || !overallBox || !conditionsBox || !recentBody)
+    return;
   if (!venueId) {
     content.classList.add("hidden");
     loader.classList.add("hidden");
@@ -879,7 +917,9 @@ async function fetchVenueInsights(venueId) {
   content.classList.add("hidden");
 
   try {
-    const response = await fetch(`backend/api/venue_insights.php?venue_id=${venueId}`);
+    const response = await fetch(
+      `backend/api/venue_insights.php?venue_id=${venueId}`,
+    );
     const json = await response.json();
     if (!response.ok || !json.success) {
       throw new Error(json.error || "Failed to load venue insights.");
@@ -936,7 +976,8 @@ async function fetchVenueInsights(venueId) {
     });
 
     if ((json.recent_matches || []).length === 0) {
-      recentBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#aaa;">No recent matches found for this venue.</td></tr>';
+      recentBody.innerHTML =
+        '<tr><td colspan="4" style="text-align:center; color:#aaa;">No recent matches found for this venue.</td></tr>';
     }
 
     content.classList.remove("hidden");
@@ -1018,8 +1059,8 @@ function setupH2HDropdowns() {
     h2.appendChild(o2);
   });
 
-  h1.addEventListener('change', () => updateDropdownColor(h1));
-  h2.addEventListener('change', () => updateDropdownColor(h2));
+  h1.addEventListener("change", () => updateDropdownColor(h1));
+  h2.addEventListener("change", () => updateDropdownColor(h2));
 }
 
 function updateDropdownColor(dropdownEl) {
@@ -1083,10 +1124,12 @@ async function fetchH2H() {
       const pd = total > 0 ? (draws / total) * 100 : 0;
 
       document.getElementById("tug-bar1").style.width = p1 + "%";
-      document.getElementById("tug-bar1").style.backgroundColor = `${team1Color}cc`;
+      document.getElementById("tug-bar1").style.backgroundColor =
+        `${team1Color}cc`;
       document.getElementById("tug-bar-draw").style.width = pd + "%";
       document.getElementById("tug-bar2").style.width = p2 + "%";
-      document.getElementById("tug-bar2").style.backgroundColor = `${team2Color}cc`;
+      document.getElementById("tug-bar2").style.backgroundColor =
+        `${team2Color}cc`;
     }
   } catch (e) {
     console.error("H2H error", e);
@@ -1254,7 +1297,10 @@ function renderTable() {
 
   if (filtered.length === 0) {
     tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding: 2rem;">No players found.</td></tr>`;
-    if (pagination) { pagination.classList.add("hidden"); pagination.innerHTML = ""; }
+    if (pagination) {
+      pagination.classList.add("hidden");
+      pagination.innerHTML = "";
+    }
     return;
   }
 
@@ -1262,7 +1308,10 @@ function renderTable() {
   const totalPages = Math.max(1, Math.ceil(totalItems / LEADERBOARD_PAGE_SIZE));
   leaderboardPage = Math.min(Math.max(leaderboardPage, 1), totalPages);
   const startIndex = (leaderboardPage - 1) * LEADERBOARD_PAGE_SIZE;
-  const pageData = filtered.slice(startIndex, startIndex + LEADERBOARD_PAGE_SIZE);
+  const pageData = filtered.slice(
+    startIndex,
+    startIndex + LEADERBOARD_PAGE_SIZE,
+  );
 
   tbody.innerHTML = "";
   pageData.forEach((p) => {
@@ -1295,22 +1344,35 @@ function renderLeaderboardPagination(totalItems, totalPages) {
     return;
   }
   pagination.classList.remove("hidden");
-  const fromItem = ((leaderboardPage - 1) * LEADERBOARD_PAGE_SIZE) + 1;
+  const fromItem = (leaderboardPage - 1) * LEADERBOARD_PAGE_SIZE + 1;
   const toItem = Math.min(leaderboardPage * LEADERBOARD_PAGE_SIZE, totalItems);
   pagination.innerHTML = `
-    <button class="page-btn" id="leaderboard-prev" ${leaderboardPage === 1 ? 'disabled' : ''}>Previous</button>
+    <button class="page-btn" id="leaderboard-prev" ${leaderboardPage === 1 ? "disabled" : ""}>Previous</button>
     <span class="page-meta">Showing ${fromItem}-${toItem} of ${totalItems} | Page ${leaderboardPage} of ${totalPages}</span>
-    <button class="page-btn" id="leaderboard-next" ${leaderboardPage === totalPages ? 'disabled' : ''}>Next</button>
+    <button class="page-btn" id="leaderboard-next" ${leaderboardPage === totalPages ? "disabled" : ""}>Next</button>
   `;
   const prevBtn = document.getElementById("leaderboard-prev");
   const nextBtn = document.getElementById("leaderboard-next");
-  if (prevBtn) prevBtn.addEventListener("click", () => { if (leaderboardPage > 1) { leaderboardPage -= 1; renderTable(); } });
-  if (nextBtn) nextBtn.addEventListener("click", () => { if (leaderboardPage < totalPages) { leaderboardPage += 1; renderTable(); } });
+  if (prevBtn)
+    prevBtn.addEventListener("click", () => {
+      if (leaderboardPage > 1) {
+        leaderboardPage -= 1;
+        renderTable();
+      }
+    });
+  if (nextBtn)
+    nextBtn.addEventListener("click", () => {
+      if (leaderboardPage < totalPages) {
+        leaderboardPage += 1;
+        renderTable();
+      }
+    });
 }
 
 function populateMatchupDropdowns() {
-  matchupPlayerNames = [...new Set(allPlayersData.map(p => p.player_name))]
-    .sort((a, b) => a.localeCompare(b));
+  matchupPlayerNames = [
+    ...new Set(allPlayersData.map((p) => p.player_name)),
+  ].sort((a, b) => a.localeCompare(b));
 
   // Also populate prediction player datalist
   const predPlayerList = document.getElementById("player-list-pred");
@@ -1339,8 +1401,12 @@ function initMatchupAutocomplete() {
 }
 
 function bindMatchupAutocompleteInput(inputEl, suggestionId) {
-  inputEl.addEventListener("input", () => renderMatchupSuggestions(inputEl, suggestionId));
-  inputEl.addEventListener("focus", () => renderMatchupSuggestions(inputEl, suggestionId));
+  inputEl.addEventListener("input", () =>
+    renderMatchupSuggestions(inputEl, suggestionId),
+  );
+  inputEl.addEventListener("focus", () =>
+    renderMatchupSuggestions(inputEl, suggestionId),
+  );
 }
 
 function renderMatchupSuggestions(inputEl, suggestionId) {
@@ -1353,7 +1419,7 @@ function renderMatchupSuggestions(inputEl, suggestionId) {
     return;
   }
   const matches = matchupPlayerNames
-    .filter(name => name.toLowerCase().includes(query))
+    .filter((name) => name.toLowerCase().includes(query))
     .slice(0, MATCHUP_SUGGESTION_LIMIT);
   if (matches.length === 0) {
     suggestionBox.innerHTML = "";
@@ -1361,7 +1427,7 @@ function renderMatchupSuggestions(inputEl, suggestionId) {
     return;
   }
   suggestionBox.innerHTML = "";
-  matches.forEach(name => {
+  matches.forEach((name) => {
     const item = document.createElement("div");
     item.className = "matchup-suggestion-item";
     item.textContent = name;
@@ -1389,7 +1455,11 @@ function titleCaseWords(value) {
     .map((word) =>
       word
         .split("-")
-        .map((part) => (part ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : part))
+        .map((part) =>
+          part
+            ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            : part,
+        )
         .join("-"),
     )
     .join(" ");
@@ -1408,15 +1478,25 @@ function formatBowlingStyle(arm, type) {
   const invalidTokens = ["-", "--", "na", "n/a", "null", "none", "unknown"];
   const armTextRaw = arm ? String(arm).trim() : "";
   const typeTextRaw = type ? String(type).trim() : "";
-  const armText = invalidTokens.includes(armTextRaw.toLowerCase()) ? "" : armTextRaw;
-  const typeText = invalidTokens.includes(typeTextRaw.toLowerCase()) ? "" : typeTextRaw;
+  const armText = invalidTokens.includes(armTextRaw.toLowerCase())
+    ? ""
+    : armTextRaw;
+  const typeText = invalidTokens.includes(typeTextRaw.toLowerCase())
+    ? ""
+    : typeTextRaw;
   if (!armText && !typeText) return "Unknown";
   const normalizedArm = armText.toLowerCase();
   const normalizedType = typeText.toLowerCase();
 
   if (armText && typeText) {
-    if (normalizedArm === normalizedType || normalizedType.includes(normalizedArm) || normalizedArm.includes(normalizedType)) {
-      return titleCaseWords(armText.length >= typeText.length ? armText : typeText);
+    if (
+      normalizedArm === normalizedType ||
+      normalizedType.includes(normalizedArm) ||
+      normalizedArm.includes(normalizedType)
+    ) {
+      return titleCaseWords(
+        armText.length >= typeText.length ? armText : typeText,
+      );
     }
     return `${titleCaseWords(armText)} ${titleCaseWords(typeText)}`;
   }
@@ -1601,13 +1681,20 @@ async function fetchTeamPerformance(teamId) {
   const overallBox = document.getElementById("team-performance-overall");
   const tbody = document.getElementById("team-performance-body");
   if (!loader || !content || !overallBox || !tbody) return;
-  if (!teamId) { content.classList.add("hidden"); loader.classList.add("hidden"); return; }
+  if (!teamId) {
+    content.classList.add("hidden");
+    loader.classList.add("hidden");
+    return;
+  }
   loader.classList.remove("hidden");
   content.classList.add("hidden");
   try {
-    const response = await fetch(`backend/api/team_performance.php?team_id=${teamId}`);
+    const response = await fetch(
+      `backend/api/team_performance.php?team_id=${teamId}`,
+    );
     const json = await response.json();
-    if (!response.ok || !json.success) throw new Error(json.error || "Failed to load team performance.");
+    if (!response.ok || !json.success)
+      throw new Error(json.error || "Failed to load team performance.");
     const o = json.overall;
     const teamColor = getTeamColor(json.team.team_name);
     overallBox.innerHTML = `
@@ -1615,15 +1702,15 @@ async function fetchTeamPerformance(teamId) {
       <div class="stat-box"><h3>${o.total_wins}/${o.total_matches}</h3><p>Total Wins/Matches</p></div>
       <div class="stat-box"><h3 style="color:${teamColor}">${o.overall_win_pct.toFixed(2)}%</h3><p>Overall Win %</p></div>
       <div class="stat-box"><h3>${o.avg_runs_per_match.toFixed(2)}</h3><p>Avg Runs per Match</p></div>
-      <div class="stat-box"><h3>${o.best_season || 'N/A'}</h3><p>Best Season (${o.best_season_win_pct.toFixed(2)}%)</p></div>
+      <div class="stat-box"><h3>${o.best_season || "N/A"}</h3><p>Best Season (${o.best_season_win_pct.toFixed(2)}%)</p></div>
       <div class="stat-box"><h3>${escapeHtml(o.overall_top_scorer.player_name)}</h3><p>Top Scorer (${o.overall_top_scorer.runs} runs)</p></div>
       <div class="stat-box"><h3>${escapeHtml(o.overall_top_wicket_taker.player_name)}</h3><p>Top Wicket-Taker (${o.overall_top_wicket_taker.wickets} wkts)</p></div>
     `;
     tbody.innerHTML = "";
-    (json.seasonal || []).forEach(s => {
+    (json.seasonal || []).forEach((s) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${s.season}</td><td>${s.position ?? '-'}</td><td>${s.played}</td>
+        <td>${s.season}</td><td>${s.position ?? "-"}</td><td>${s.played}</td>
         <td style="color:${teamColor}; font-weight:700;">${s.wins}</td><td>${s.losses}</td><td>${s.no_result}</td>
         <td style="color:${teamColor}; font-weight:600;">${s.win_pct.toFixed(2)}%</td>
         <td>${Number(s.avg_runs_per_match).toFixed(2)}</td>
@@ -1637,7 +1724,9 @@ async function fetchTeamPerformance(teamId) {
     overallBox.innerHTML = "";
     tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:1rem; color:#ff9aba;">${escapeHtml(err.message)}</td></tr>`;
     content.classList.remove("hidden");
-  } finally { loader.classList.add("hidden"); }
+  } finally {
+    loader.classList.add("hidden");
+  }
 }
 
 // ----------------------------------------------------
@@ -1646,20 +1735,30 @@ async function fetchTeamPerformance(teamId) {
 async function fetchSeasonAnalysis(season) {
   const loader = document.getElementById("season-analysis-loader");
   const content = document.getElementById("season-analysis-content");
-  if (!loader || !content || !season) { if(content) content.classList.add("hidden"); if(loader) loader.classList.add("hidden"); return; }
+  if (!loader || !content || !season) {
+    if (content) content.classList.add("hidden");
+    if (loader) loader.classList.add("hidden");
+    return;
+  }
   loader.classList.remove("hidden");
   content.classList.add("hidden");
   try {
-    const response = await fetch(`backend/api/season_analysis.php?season=${season}`);
+    const response = await fetch(
+      `backend/api/season_analysis.php?season=${season}`,
+    );
     const json = await response.json();
-    if (!response.ok || !json.success) throw new Error(json.error || "Failed to load season analysis.");
+    if (!response.ok || !json.success)
+      throw new Error(json.error || "Failed to load season analysis.");
     renderSeasonAnalysis(json);
     content.classList.remove("hidden");
   } catch (err) {
     const tbody = document.getElementById("season-points-table-body");
-    if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:1rem; color:#ff9aba;">${escapeHtml(err.message)}</td></tr>`;
+    if (tbody)
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:1rem; color:#ff9aba;">${escapeHtml(err.message)}</td></tr>`;
     content.classList.remove("hidden");
-  } finally { loader.classList.add("hidden"); }
+  } finally {
+    loader.classList.add("hidden");
+  }
 }
 
 function renderSeasonAnalysis(data) {
@@ -1675,15 +1774,19 @@ function renderSeasonAnalysis(data) {
   runnerUpElement.textContent = runnerUpTeam.team_name || "-";
   runnerUpElement.style.color = runnerUpColor;
 
-  document.getElementById("season-winner-record").textContent = `${winnerTeam.wins}W - ${winnerTeam.losses}L`;
-  document.getElementById("season-runner-up-record").textContent = `${runnerUpTeam.wins}W - ${runnerUpTeam.losses}L`;
-  document.getElementById("season-match-count").textContent = data.season_stats.total_matches;
+  document.getElementById("season-winner-record").textContent =
+    `${winnerTeam.wins}W - ${winnerTeam.losses}L`;
+  document.getElementById("season-runner-up-record").textContent =
+    `${runnerUpTeam.wins}W - ${runnerUpTeam.losses}L`;
+  document.getElementById("season-match-count").textContent =
+    data.season_stats.total_matches;
 
   const battersDiv = document.getElementById("season-top-batters");
   battersDiv.innerHTML = "";
   (data.top_batters || []).forEach((batter, idx) => {
     const div = document.createElement("div");
-    div.style.cssText = "padding:0.8rem; background:rgba(69,243,255,0.05); border-left:3px solid var(--primary); border-radius:0.5rem;";
+    div.style.cssText =
+      "padding:0.8rem; background:rgba(69,243,255,0.05); border-left:3px solid var(--primary); border-radius:0.5rem;";
     div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:600;">${idx + 1}. ${escapeHtml(batter.player_name)}</span><span style="color:var(--primary); font-weight:800; font-size:1.1rem;">${batter.total_runs}</span></div><p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin:0.3rem 0 0 0;">${batter.matches} matches</p>`;
     battersDiv.appendChild(div);
   });
@@ -1692,7 +1795,8 @@ function renderSeasonAnalysis(data) {
   bowlersDiv.innerHTML = "";
   (data.top_bowlers || []).forEach((bowler, idx) => {
     const div = document.createElement("div");
-    div.style.cssText = "padding:0.8rem; background:rgba(255,0,85,0.05); border-left:3px solid var(--secondary); border-radius:0.5rem;";
+    div.style.cssText =
+      "padding:0.8rem; background:rgba(255,0,85,0.05); border-left:3px solid var(--secondary); border-radius:0.5rem;";
     div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:600;">${idx + 1}. ${escapeHtml(bowler.player_name)}</span><span style="color:var(--secondary); font-weight:800; font-size:1.1rem;">${bowler.wickets}</span></div><p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin:0.3rem 0 0 0;">${bowler.matches} matches</p>`;
     bowlersDiv.appendChild(div);
   });
@@ -1705,8 +1809,12 @@ function renderSeasonAnalysis(data) {
   if (highest) highestTeamEl.style.color = getTeamColor(highest.team);
   lowestTeamEl.textContent = lowest ? lowest.team : "-";
   if (lowest) lowestTeamEl.style.color = getTeamColor(lowest.team);
-  document.getElementById("season-highest-runs").textContent = highest ? highest.runs : "-";
-  document.getElementById("season-lowest-runs").textContent = lowest ? lowest.runs : "-";
+  document.getElementById("season-highest-runs").textContent = highest
+    ? highest.runs
+    : "-";
+  document.getElementById("season-lowest-runs").textContent = lowest
+    ? lowest.runs
+    : "-";
 
   const tbody = document.getElementById("season-points-table-body");
   tbody.innerHTML = "";

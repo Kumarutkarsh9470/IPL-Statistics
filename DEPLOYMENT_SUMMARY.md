@@ -68,6 +68,7 @@
 ## 📋 Next Steps (Execute in This Order)
 
 ### **STEP 1: Push to GitHub** (2 minutes)
+
 ```bash
 git add -A
 git commit -m "Prepare for deployment: add config, models, and documentation"
@@ -75,39 +76,49 @@ git push origin main
 ```
 
 ### **STEP 2: Create Accounts** (5 minutes)
+
 - [ ] Vercel: https://vercel.com (free)
 - [ ] Railway: https://railway.app (free)
 - [ ] Planet Scale: https://planetscale.com (free)
 
 ### **STEP 3: Set Up Database** (10 minutes)
+
 Follow **DEPLOYMENT.md STEP 1**:
+
 - Create Planet Scale database
 - Export local MySQL data
 - Import to Planet Scale
 - Save connection string
 
 ### **STEP 4: Deploy PHP Backend** (15 minutes)
+
 Follow **DEPLOYMENT.md STEP 2**:
+
 - Connect Railway to GitHub
 - Set environment variables
 - Deploy
 - Get Railway URL
 
 ### **STEP 5: Deploy ML API** (10 minutes)
+
 Follow **DEPLOYMENT.md STEP 3**:
+
 - Create Vercel project
 - Set environment variables
 - Auto-deploys
 - Test health endpoint
 
 ### **STEP 6: Deploy Frontend** (5 minutes)
+
 Follow **DEPLOYMENT.md STEP 4**:
+
 - Update API URLs in `portal/js/main.js`
 - Create Vercel project for `portal/` folder
 - Auto-deploys
 - Test application
 
 ### **STEP 7: Test Everything** (5 minutes)
+
 - [ ] Frontend loads: https://your-app.vercel.app
 - [ ] ML API responds: curl https://your-api.vercel.app/api/health
 - [ ] PHP API responds: https://your-railway-app.up.railway.app/api/teams
@@ -132,22 +143,24 @@ Planet Scale Password:  ___________
 
 ## 💰 Cost Breakdown
 
-| Service | Free Tier | Cost |
-|---------|-----------|------|
-| Vercel (Frontend) | ∞ requests, 100 GB bandwidth | $0 |
-| Vercel Functions (ML API) | 1M invocations/month | $0 |
-| Railway | 500 hours/month | $0 |
-| Planet Scale | 5 GB storage | $0 |
-| **TOTAL** | | **$0/month** |
+| Service                   | Free Tier                    | Cost         |
+| ------------------------- | ---------------------------- | ------------ |
+| Vercel (Frontend)         | ∞ requests, 100 GB bandwidth | $0           |
+| Vercel Functions (ML API) | 1M invocations/month         | $0           |
+| Railway                   | 500 hours/month              | $0           |
+| Planet Scale              | 5 GB storage                 | $0           |
+| **TOTAL**                 |                              | **$0/month** |
 
 ---
 
 ## ⚠️ Important Notes
 
 ### Mock Models
+
 The generated models are **placeholders for testing only**. They use random data.
 
 **To replace with real models:**
+
 1. Get IPL dataset (Kaggle, or your source)
 2. Run training locally:
    ```bash
@@ -162,13 +175,17 @@ The generated models are **placeholders for testing only**. They use random data
 4. Vercel auto-redeploys
 
 ### Database Migration
+
 For first deployment, you need to:
+
 1. Export local MySQL data (if you have it)
 2. Import to Planet Scale
 3. If you don't have local data, create empty schema using `mysql_schema.sql`
 
 ### PHP File Structure
+
 Railway expects:
+
 - API routes in `portal/backend/api/` folder
 - `portal/backend/db.php` for database connection
 - Each API file returns JSON
@@ -179,13 +196,13 @@ If your structure is different, update `Procfile` accordingly.
 
 ## 🆘 Quick Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
-| **Models not loading** | Run: `python ml/generate_mock_models.py` |
+| Problem                       | Solution                                    |
+| ----------------------------- | ------------------------------------------- |
+| **Models not loading**        | Run: `python ml/generate_mock_models.py`    |
 | **Database connection fails** | Verify Planet Scale credentials in env vars |
-| **CORS errors** | Update allowed origins in `ml/serve.py` |
-| **PHP API not found** | Check Railway deployment logs |
-| **Frontend shows errors** | Update API URLs in `portal/js/main.js` |
+| **CORS errors**               | Update allowed origins in `ml/serve.py`     |
+| **PHP API not found**         | Check Railway deployment logs               |
+| **Frontend shows errors**     | Update API URLs in `portal/js/main.js`      |
 
 ---
 
@@ -225,6 +242,7 @@ If your structure is different, update `Procfile` accordingly.
 ## 🎉 Success Criteria
 
 After following all steps, you should have:
+
 - ✅ Public frontend URL
 - ✅ Public ML API URL
 - ✅ Public PHP backend URL
