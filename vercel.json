@@ -1,5 +1,15 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/portal/index.html" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "portal/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/portal/$1"
+    }
   ]
 }
