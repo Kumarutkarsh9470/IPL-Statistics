@@ -1,3 +1,37 @@
+/**
+ * API Configuration for deployment
+ * Automatically detects environment (local dev, staging, production)
+ */
+function getApiEndpoints() {
+    const host = window.location.hostname;
+    const protocol = window.location.protocol;
+    
+    // Local development
+    if (host === 'localhost' || host === '127.0.0.1') {
+        return {
+            PHP_API: 'http://localhost/IPL-statistics-predictions/portal/backend/api/',
+            ML_API: 'http://localhost:8000/api',
+        };
+    }
+    
+    // Production (Vercel frontend + external backends)
+    // Customize these with your actual deployment URLs
+    return {
+        // PHP Backend on Railway
+        PHP_API: 'https://YOUR_RAILWAY_APP.up.railway.app/api/',
+        // ML API on Vercel
+        ML_API: 'https://YOUR_VERCEL_APP.vercel.app/api',
+    };
+}
+
+const APIS = getApiEndpoints();
+const PHP_API_BASE = APIS.PHP_API;
+const ML_API_BASE = APIS.ML_API + '/predict';
+
+console.log('📡 API Configuration:', { PHP_API_BASE, ML_API_BASE });
+
+// ============================================================
+
 let allPlayersData = [];
 let allTeamsData = [];
 let allVenuesData = [];
@@ -31,8 +65,6 @@ let chartInstanceBatter = null;
 let chartInstanceBowler = null;
 let chartInstanceToss = null;
 let chartInstanceScoreProjection = null;
-
-const ML_API_BASE = "http://localhost:8000/api";
 
 document.addEventListener("DOMContentLoaded", () => {
   initNavigation();

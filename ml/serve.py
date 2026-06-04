@@ -86,15 +86,34 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — allow browser calls from XAMPP (port 80) and common dev origins
+# CORS — allow browser calls from development, local, and production
+# This allows requests from:
+# - Local development (XAMPP)
+# - Vercel frontend deployment
+# - Railway PHP backend
+# - Any origin in development (use restrictively in production)
+import os
+allowed_origins = [
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://localhost:80",
+    "http://127.0.0.1:80",
+]
+
+# Add Vercel URL in production
+vercel_url = os.getenv("VERCEL_URL")
+if vercel_url:
+    allowed_origins.append(f"https://{vercel_url}")
+    allowed_origins.append(f"http://{vercel_url}")
+
+# Add Railway PHP backend URL
+railway_url = os.getenv("RAILWAY_BACKEND_URL", "")
+if railway_url:
+    allowed_origins.append(railway_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost",
-        "http://127.0.0.1",
-        "http://localhost:80",
-        "http://127.0.0.1:80",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
