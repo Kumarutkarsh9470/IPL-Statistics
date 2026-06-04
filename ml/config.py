@@ -26,6 +26,7 @@ Configuration Details:
 from pathlib import Path
 from typing import Dict, List
 import os
+from urllib.parse import urlparse
 
 # --- Paths ---
 ML_DIR: Path = Path(__file__).resolve().parent
@@ -39,14 +40,31 @@ MODELS_DIR.mkdir(parents=True, exist_ok=True)
 EVALUATION_DIR.mkdir(parents=True, exist_ok=True)
 
 # --- Database Configuration ---
-# Can be overridden via environment variables (.env file)
-DB_CONFIG: Dict[str, str] = {
-    "host": os.getenv("DB_HOST", "127.0.0.1"),
-    "port": int(os.getenv("DB_PORT", "3306")),
-    "user": os.getenv("DB_USER", "ipl_user"),
-    "password": os.getenv("DB_PASSWORD", "password123"),
-    "database": os.getenv("DB_NAME", "ipl_db"),
-}
+# Can be overridden via environment variables (.env file) or a single URL.
+MYSQL_URL = (
+    os.getenv("MYSQL_URL")
+    or os.getenv("MYSQL_PUBLIC_URL")
+    or os.getenv("DATABASE_URL")
+)
+
+if MYSQL_URL:
+    parsed = urlparse(MYSQL_URL)
+    DB_CONFIG: Dict[str, str] = {
+        "url": MYSQL_URL,
+        "host": parsed.hostname,
+        "port": parsed.port or 3306,
+        "user": parsed.username,
+        "password": parsed.password,
+        "database": parsed.path.lstrip("/"),
+    }
+else:
+    DB_CONFIG: Dict[str, str] = {
+        "host": os.getenv("DB_HOST", "127.0.0.1"),
+        "port": int(os.getenv("DB_PORT", "3306")),
+        "user": os.getenv("DB_USER", "ipl_user"),
+        "password": os.getenv("DB_PASSWORD", "password123"),
+        "database": os.getenv("DB_NAME", "ipl_db"),
+    }
 
 # --- Training Data Split (Time-Based) ---
 # No temporal data leakage: Train < Val < Test chronologically

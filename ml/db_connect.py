@@ -4,6 +4,7 @@ Reads from the local MySQL ipl_db.
 """
 import pandas as pd
 from sqlalchemy import create_engine
+from urllib.parse import urlparse
 from ml.config import DB_CONFIG
 
 _engine = None
@@ -12,10 +13,22 @@ _engine = None
 def get_engine():
     global _engine
     if _engine is None:
-        url = (
-            f"mysql+mysqlconnector://{DB_CONFIG['user']}:{DB_CONFIG['password']}"
-            f"@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
-        )
+        if DB_CONFIG.get("url"):
+            parsed = urlparse(DB_CONFIG["url"])
+            user = parsed.username or DB_CONFIG.get("user")
+            password = parsed.password or DB_CONFIG.get("password")
+            host = parsed.hostname or DB_CONFIG.get("host")
+            port = parsed.port or DB_CONFIG.get("port")
+            database = parsed.path.lstrip("/") or DB_CONFIG.get("database")
+            url = (
+                f"mysql+mysqlconnector://{user}:{password}"
+                f"@{host}:{port}/{database}"
+            )
+        else:
+            url = (
+                f"mysql+mysqlconnector://{DB_CONFIG['user']}:{DB_CONFIG['password']}"
+                f"@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
+            )
         _engine = create_engine(url, pool_pre_ping=True)
     return _engine
 

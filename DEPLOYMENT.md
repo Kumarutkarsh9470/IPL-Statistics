@@ -88,6 +88,16 @@ mysql -h <host> -u <user> -p<password> <database>
 mysql -h <host> -u <user> -p<password> <database> < ipl_db_backup.sql
 ```
 
+##### 1.4 Import the schema using PowerShell
+
+If you have your Railway public MySQL URL or credentials, run this in PowerShell from the project root:
+
+```powershell
+python .\scripts\import_railway_schema.py --url "mysql://root:1xGfmgQrmppcbRCPvBKgEyQ0ejkGrlzy@acela.proxy.rlyw.net:47555/railway"
+```
+
+If your URL includes a different database name, replace the URL accordingly.
+
 **✅ Done! Save credentials for later.**
 
 ---
