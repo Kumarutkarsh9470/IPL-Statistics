@@ -1,17 +1,38 @@
 {
-  "buildCommand": "pip install -r requirements.txt",
+  "buildCommand": "bash build.sh",
   "framework": "python",
   "outputDirectory": ".",
+  "python": {
+    "version": "3.12"
+  },
   "functions": {
     "api/*.py": {
       "runtime": "python3.12"
     }
   },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/portal/index.html"
+    }
+  ],
   "env": {
     "DB_HOST": "@db_host",
     "DB_PORT": "@db_port",
     "DB_USER": "@db_user",
     "DB_PASSWORD": "@db_password",
-    "DB_NAME": "@db_name"
-  }
+    "DB_NAME": "@db_name",
+    "FASTAPI_HOST": "0.0.0.0",
+    "FASTAPI_PORT": "8000"
+  },
+  "buildIgnore": [
+    "data/raw/**",
+    "EDA/**",
+    "*.ipynb",
+    ".pytest_cache/**"
+  ]
 }
