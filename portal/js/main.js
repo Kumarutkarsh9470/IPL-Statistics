@@ -19,9 +19,9 @@ function getApiEndpoints() {
   // Customize these with your actual deployment URLs
   return {
     // PHP Backend on Railway
-    PHP_API: "https://YOUR_RAILWAY_APP.up.railway.app/api/",
+    PHP_API: "https://ipl-statistics-production.up.railway.app/api",
     // ML API on Vercel
-    ML_API: "https://YOUR_VERCEL_APP.vercel.app/api",
+    ML_API: "https://mysql-production-ebe23.up.railway.app/api",
   };
 }
 
